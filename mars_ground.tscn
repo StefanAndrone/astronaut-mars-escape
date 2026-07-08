@@ -1,0 +1,101 @@
+[gd_scene load_steps=14 format=3 uid="uid://dau3q124iggbv"]
+
+[ext_resource type="Texture2D" uid="uid://ogphl884i6a2" path="res://images/Mars Ground.png" id="1_35m57"]
+[ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="2_4vqjs"]
+[ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="3_4vqjs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4vqjs"]
+atlas = ExtResource("3_4vqjs")
+region = Rect2(778, 10, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qsrdx"]
+atlas = ExtResource("3_4vqjs")
+region = Rect2(37, 10, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mvtox"]
+atlas = ExtResource("3_4vqjs")
+region = Rect2(284, 10, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o12ty"]
+atlas = ExtResource("3_4vqjs")
+region = Rect2(531, 10, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7cvp"]
+atlas = ExtResource("3_4vqjs")
+region = Rect2(37, 519, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l3vef"]
+atlas = ExtResource("3_4vqjs")
+region = Rect2(284, 519, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6m24r"]
+atlas = ExtResource("3_4vqjs")
+region = Rect2(531, 519, 243, 505)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qkitu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4vqjs")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qsrdx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mvtox")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o12ty")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7cvp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l3vef")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6m24r")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qsrdx"]
+size = Vector2(119.5, 317.5)
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_4vqjs"]
+vertices = PackedVector2Array(1180.08, 612.953, 10, 608.039, 10, 402, 1181.91, 402)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1192, 392, 1190, 623, 0, 618)])
+
+[node name="MarsGround" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(612.25, 323)
+scale = Vector2(0.500408, 0.501543)
+texture = ExtResource("1_35m57")
+
+[node name="Landon" type="CharacterBody2D" parent="."]
+position = Vector2(90, 450)
+script = ExtResource("2_4vqjs")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Landon"]
+position = Vector2(0, -120)
+scale = Vector2(0.686812, 0.679688)
+sprite_frames = SubResource("SpriteFrames_qkitu")
+animation = &"idle"
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Landon"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Landon"]
+position = Vector2(0, -120)
+shape = SubResource("RectangleShape2D_qsrdx")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_4vqjs")

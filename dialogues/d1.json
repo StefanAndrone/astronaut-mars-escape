@@ -1,10 +1,7 @@
-{
-  "lines": [
-    {"name": "Landon", "text": "Yeesh... what happened?"},
-    {"name": "AI", "text": "Analysis: Structural integrity at 12%. We are in danger."},
-    {"name": "Landon", "text": "We need to find a battery... "},
-    {"name": "AI", "text": "No kidding... also we are on Mars"},
-    {"name": "Landon", "text": "What??? Wow. I even see aliens... or should I say martians."},
-    {"name": "Landon", "text": "Yeah tough luck..."}
-  ]
-}
+[
+	{"speaker": "Astronaut", "text": "Ugh... my head. Computer, where are we?", "duration": 4.0},
+	{"speaker": "AI", "text": "Warning: Unscheduled landing complete. We are on Mars.", "duration": 5.0},
+	{"speaker": "Astronaut", "text": "Mars?! How did we end up here?", "duration": 3.5},
+	{"speaker": "AI", "text": "Navigation failure. Auxiliary battery levels are at 0%.", "duration": 5.0},
+	{"speaker": "Astronaut", "text": "Great. I need to go look for a replacement.", "duration": 4.0}
+]
