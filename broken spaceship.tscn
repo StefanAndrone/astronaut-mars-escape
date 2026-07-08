@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://cwb5bxhpbmn6l"]
+
+[ext_resource type="Texture2D" uid="uid://b30k1jgenufoj" path="res://images/spaceship interior.png" id="1_oxuq3"]
+[ext_resource type="Texture2D" uid="uid://d1uqogave1epr" path="res://images/MC.png" id="2_ewivf"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ewivf"]
+size = Vector2(219, 1031.99)
+
+[node name="BrokenSpaceship" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(576, 324)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_oxuq3")
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+position = Vector2(520.5, 412)
+scale = Vector2(0.584599, 0.253879)
+shape = SubResource("RectangleShape2D_ewivf")
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+position = Vector2(529, 415)
+scale = Vector2(0.532, 0.588)
+texture = ExtResource("2_ewivf")

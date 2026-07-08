@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8tedsu6yc873"]
+
+[ext_resource type="Texture2D" uid="uid://ct1a4hohbw400" path="res://images/initial description.png" id="1_raq6v"]
+[ext_resource type="Texture2D" uid="uid://dpxm5q6fpghbu" path="res://images/start button.png" id="2_ubb38"]
+[ext_resource type="Script" uid="uid://b4411cioi0mcs" path="res://scripts/initial description/start button.gd" id="3_script_start"]
+
+[node name="initial_description" type="Node2D"]
+
+[node name="desc" type="Sprite2D" parent="."]
+position = Vector2(576, 324)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_raq6v")
+
+[node name="start button" type="Sprite2D" parent="."]
+script = ExtResource("3_script_start")
+position = Vector2(576, 478)
+scale = Vector2(0.109384, 0.0884259)
+texture = ExtResource("2_ubb38")
+input_pickable = true
