@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dau3q124iggbv"]
+[gd_scene load_steps=15 format=3 uid="uid://dau3q124iggbv"]
 
 [ext_resource type="Texture2D" uid="uid://ogphl884i6a2" path="res://images/Mars Ground.png" id="1_35m57"]
 [ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="2_4vqjs"]
@@ -74,6 +74,8 @@ vertices = PackedVector2Array(1180.08, 612.953, 10, 608.039, 10, 402, 1181.91, 4
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1192, 392, 1190, 623, 0, 618)])
 
+[sub_resource type="MeshTexture" id="MeshTexture_4vqjs"]
+
 [node name="MarsGround" type="Node2D"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -99,3 +101,8 @@ shape = SubResource("RectangleShape2D_qsrdx")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_4vqjs")
+
+[node name="FireExtinguisher" type="Sprite2D" parent="."]
+position = Vector2(674.25, 716)
+scale = Vector2(362.75, 501)
+texture = SubResource("MeshTexture_4vqjs")
