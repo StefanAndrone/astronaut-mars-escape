@@ -1,8 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://dau3q124iggbv"]
+[gd_scene load_steps=17 format=3 uid="uid://dau3q124iggbv"]
 
 [ext_resource type="Texture2D" uid="uid://ogphl884i6a2" path="res://images/Mars Ground.png" id="1_35m57"]
 [ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="2_4vqjs"]
 [ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="3_4vqjs"]
+[ext_resource type="Texture2D" uid="uid://cgj460jkhly0i" path="res://images/fire extinguisher.png" id="4_qsrdx"]
+[ext_resource type="Texture2D" uid="uid://c427cm3k4wm7y" path="res://images/tall chair.png" id="5_mvtox"]
+[ext_resource type="Texture2D" uid="uid://70swr61e63f6" path="res://images/remote for glove.png" id="6_o12ty"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4vqjs"]
 atlas = ExtResource("3_4vqjs")
@@ -74,8 +77,6 @@ vertices = PackedVector2Array(1180.08, 612.953, 10, 608.039, 10, 402, 1181.91, 4
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1192, 392, 1190, 623, 0, 618)])
 
-[sub_resource type="MeshTexture" id="MeshTexture_4vqjs"]
-
 [node name="MarsGround" type="Node2D"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -103,6 +104,16 @@ shape = SubResource("RectangleShape2D_qsrdx")
 navigation_polygon = SubResource("NavigationPolygon_4vqjs")
 
 [node name="FireExtinguisher" type="Sprite2D" parent="."]
-position = Vector2(674.25, 716)
-scale = Vector2(362.75, 501)
-texture = SubResource("MeshTexture_4vqjs")
+position = Vector2(367.76, 427.775)
+scale = Vector2(0.348961, 0.363101)
+texture = ExtResource("4_qsrdx")
+
+[node name="TallChair" type="Sprite2D" parent="."]
+position = Vector2(735.086, 345.24)
+scale = Vector2(0.487656, 0.512961)
+texture = ExtResource("5_mvtox")
+
+[node name="RemoteForGlove" type="Sprite2D" parent="."]
+position = Vector2(1013, 470)
+scale = Vector2(0.252, 0.236)
+texture = ExtResource("6_o12ty")
