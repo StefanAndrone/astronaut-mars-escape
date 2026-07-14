@@ -1,11 +1,13 @@
-[gd_scene load_steps=17 format=3 uid="uid://dau3q124iggbv"]
+[gd_scene format=3 uid="uid://dau3q124iggbv"]
 
 [ext_resource type="Texture2D" uid="uid://ogphl884i6a2" path="res://images/Mars Ground.png" id="1_35m57"]
 [ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="2_4vqjs"]
 [ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="3_4vqjs"]
+[ext_resource type="Texture2D" uid="uid://16d58bpumpto" path="res://images/arrow.png" id="4_l3vef"]
 [ext_resource type="Texture2D" uid="uid://cgj460jkhly0i" path="res://images/fire extinguisher.png" id="4_qsrdx"]
 [ext_resource type="Texture2D" uid="uid://c427cm3k4wm7y" path="res://images/tall chair.png" id="5_mvtox"]
 [ext_resource type="Texture2D" uid="uid://70swr61e63f6" path="res://images/remote for glove.png" id="6_o12ty"]
+[ext_resource type="Texture2D" uid="uid://bxlwl1qpr1et4" path="res://images/brown.png" id="7_r7cvp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4vqjs"]
 atlas = ExtResource("3_4vqjs")
@@ -41,7 +43,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4vqjs")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 5.0
 }, {
@@ -64,7 +66,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6m24r")
 }],
-"loop": true,
+"loop": 1,
 "name": &"walk",
 "speed": 12.0
 }]
@@ -73,47 +75,81 @@ animations = [{
 size = Vector2(119.5, 317.5)
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_4vqjs"]
-vertices = PackedVector2Array(1180.08, 612.953, 10, 608.039, 10, 402, 1181.91, 402)
+vertices = PackedVector2Array(1207.3516, 486.9375, 2.828125, 481.04688, 9.2265625, 401.9297, 1201.6016, 394.0625)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1192, 392, 1190, 623, 0, 618)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1211, 384, 1218, 497, -8, 491)])
 
-[node name="MarsGround" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wb3vx"]
+size = Vector2(257.90848, 385.56757)
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g6v6y"]
+size = Vector2(200.96127, 413.28687)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jj2rh"]
+size = Vector2(357.14258, 372.88153)
+
+[node name="MarsGround" type="Node2D" unique_id=1291509038]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1832063404]
 position = Vector2(612.25, 323)
 scale = Vector2(0.500408, 0.501543)
 texture = ExtResource("1_35m57")
 
-[node name="Landon" type="CharacterBody2D" parent="."]
+[node name="Landon" type="CharacterBody2D" parent="." unique_id=1472484752]
 position = Vector2(90, 450)
 script = ExtResource("2_4vqjs")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Landon"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Landon" unique_id=1275336460]
 position = Vector2(0, -120)
 scale = Vector2(0.686812, 0.679688)
 sprite_frames = SubResource("SpriteFrames_qkitu")
 animation = &"idle"
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Landon"]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Landon" unique_id=862544267]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Landon"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Landon" unique_id=588481310]
 position = Vector2(0, -120)
 shape = SubResource("RectangleShape2D_qsrdx")
 
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=1102424658]
 navigation_polygon = SubResource("NavigationPolygon_4vqjs")
 
-[node name="FireExtinguisher" type="Sprite2D" parent="."]
+[node name="FireExtinguisher" type="Sprite2D" parent="." unique_id=1204327268]
 position = Vector2(367.76, 427.775)
 scale = Vector2(0.348961, 0.363101)
 texture = ExtResource("4_qsrdx")
 
-[node name="TallChair" type="Sprite2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FireExtinguisher" unique_id=539897902]
+position = Vector2(-19.371826, 14.3897705)
+shape = SubResource("RectangleShape2D_wb3vx")
+
+[node name="TallChair" type="Sprite2D" parent="." unique_id=178103561]
 position = Vector2(735.086, 345.24)
 scale = Vector2(0.487656, 0.512961)
 texture = ExtResource("5_mvtox")
 
-[node name="RemoteForGlove" type="Sprite2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TallChair" unique_id=504466108]
+position = Vector2(-8.378784, -23.86145)
+scale = Vector2(0.9999997, 0.99999976)
+shape = SubResource("RectangleShape2D_g6v6y")
+
+[node name="RemoteForGlove" type="Sprite2D" parent="." unique_id=852883649]
 position = Vector2(1013, 470)
 scale = Vector2(0.252, 0.236)
 texture = ExtResource("6_o12ty")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RemoteForGlove" unique_id=1224464099]
+position = Vector2(23.80957, -29.661133)
+scale = Vector2(0.9999996, 1)
+shape = SubResource("RectangleShape2D_jj2rh")
+
+[node name="InventoryBar" type="Sprite2D" parent="." unique_id=2146886776]
+position = Vector2(-106.082, 629.192)
+scale = Vector2(0.501632, 0.0964506)
+texture = ExtResource("7_r7cvp")
+offset = Vector2(1429, -453)
+
+[node name="RightArrow" type="Sprite2D" parent="." unique_id=1941401796]
+position = Vector2(1100.9999, 439.00006)
+scale = Vector2(0.14264911, 0.1487604)
+texture = ExtResource("4_l3vef")

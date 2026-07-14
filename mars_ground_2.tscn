@@ -1,0 +1,125 @@
+[gd_scene format=3 uid="uid://di4eqf22q2rs5"]
+
+[ext_resource type="Texture2D" uid="uid://ogphl884i6a2" path="res://images/Mars Ground.png" id="1_f5c4h"]
+[ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="2_212ob"]
+[ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="3_pqk1g"]
+[ext_resource type="Texture2D" uid="uid://16d58bpumpto" path="res://images/arrow.png" id="4_pqk1g"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g6v6y"]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4vqjs"]
+atlas = ExtResource("3_pqk1g")
+region = Rect2(778, 10, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qsrdx"]
+atlas = ExtResource("3_pqk1g")
+region = Rect2(37, 10, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mvtox"]
+atlas = ExtResource("3_pqk1g")
+region = Rect2(284, 10, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o12ty"]
+atlas = ExtResource("3_pqk1g")
+region = Rect2(531, 10, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7cvp"]
+atlas = ExtResource("3_pqk1g")
+region = Rect2(37, 519, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l3vef"]
+atlas = ExtResource("3_pqk1g")
+region = Rect2(284, 519, 243, 505)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6m24r"]
+atlas = ExtResource("3_pqk1g")
+region = Rect2(531, 519, 243, 505)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ey4r8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4vqjs")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qsrdx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mvtox")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o12ty")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7cvp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l3vef")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6m24r")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ognt2"]
+size = Vector2(119.5, 317.5)
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_pqk1g"]
+vertices = PackedVector2Array(1207.3516, 486.9375, 2.828125, 481.04688, 9.2265625, 401.9297, 1201.6016, 394.0625)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1211, 384, 1218, 497, -8, 491)])
+
+[node name="MarsGround2" type="Node2D" unique_id=1299473091]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=965572796]
+position = Vector2(612.25, 323)
+scale = Vector2(0.500408, 0.501543)
+texture = ExtResource("1_f5c4h")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprite2D" unique_id=2129371456]
+sprite_frames = SubResource("SpriteFrames_g6v6y")
+animation = &"new_animation"
+
+[node name="Landon" type="CharacterBody2D" parent="." unique_id=396569122]
+position = Vector2(90, 450)
+script = ExtResource("2_212ob")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Landon" unique_id=1776262400]
+position = Vector2(0, -120)
+scale = Vector2(0.686812, 0.679688)
+sprite_frames = SubResource("SpriteFrames_ey4r8")
+animation = &"idle"
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Landon" unique_id=432007021]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Landon" unique_id=566449925]
+position = Vector2(0, -120)
+shape = SubResource("RectangleShape2D_ognt2")
+
+[node name="LeftArrow" type="Sprite2D" parent="." unique_id=69239488]
+position = Vector2(66, 479)
+scale = Vector2(0.14264911, 0.1487604)
+texture = ExtResource("4_pqk1g")
+flip_h = true
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=1818950140]
+navigation_polygon = SubResource("NavigationPolygon_pqk1g")
