@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="3_pqk1g"]
 [ext_resource type="Texture2D" uid="uid://16d58bpumpto" path="res://images/arrow.png" id="4_pqk1g"]
 [ext_resource type="Texture2D" uid="uid://ypwj30l083da" path="res://images/Red.png" id="5_ey4r8"]
+[ext_resource type="Script" uid="uid://btwusxo00eegq" path="res://scripts/red_line.gd" id="5_qn11y"]
 [ext_resource type="Texture2D" uid="uid://cppyxnve0d2rq" path="res://images/martian.png" id="6_ognt2"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_g6v6y"]
@@ -91,7 +92,7 @@ polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1211, 384, 1218, 497, -8, 491)])
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g6v6y"]
-size = Vector2(5202.127, 1247.2781)
+size = Vector2(1195.6377, 1247.2781)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qn11y"]
 atlas = ExtResource("6_ognt2")
@@ -196,6 +197,9 @@ animation = &"idle"
 position = Vector2(0, -120)
 shape = SubResource("RectangleShape2D_ognt2")
 
+[node name="Marker2D" type="Marker2D" parent="Landon" unique_id=568747323]
+position = Vector2(7, -131)
+
 [node name="LeftArrow" type="Sprite2D" parent="." unique_id=69239488]
 position = Vector2(66, 479)
 scale = Vector2(0.14264911, 0.1487604)
@@ -205,13 +209,17 @@ flip_h = true
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=1818950140]
 navigation_polygon = SubResource("NavigationPolygon_pqk1g")
 
-[node name="RedLine" type="Sprite2D" parent="." unique_id=2081301102]
-position = Vector2(429.125, 517)
-scale = Vector2(0.0049979547, 0.20524693)
+[node name="RedLine" type="Area2D" parent="." unique_id=348315752]
+script = ExtResource("5_qn11y")
+
+[node name="RedLineSprite" type="Sprite2D" parent="RedLine" unique_id=65480304]
+position = Vector2(412, 517)
+scale = Vector2(0.002, 0.20524693)
 texture = ExtResource("5_ey4r8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RedLine" unique_id=1884319164]
-position = Vector2(1575.6328, -9.744385)
+position = Vector2(412.16177, 515)
+scale = Vector2(0.008975932, 0.20524691)
 shape = SubResource("RectangleShape2D_g6v6y")
 
 [node name="FirstMartian" type="AnimatedSprite2D" parent="." unique_id=133106242]
@@ -220,7 +228,11 @@ scale = Vector2(1.5, 1.552)
 sprite_frames = SubResource("SpriteFrames_ognt2")
 animation = &"idle"
 
+[node name="Marker2D" type="Marker2D" parent="FirstMartian" unique_id=249382971]
+position = Vector2(-62.66571, -5.1546326)
+
 [node name="Laser" type="Sprite2D" parent="." unique_id=1090071347]
+visible = false
 position = Vector2(670.5, 318)
 scale = Vector2(0.2093023, 0.015432108)
 texture = ExtResource("5_ey4r8")

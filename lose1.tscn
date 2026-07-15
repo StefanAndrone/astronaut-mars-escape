@@ -1,17 +1,19 @@
 [gd_scene format=3 uid="uid://slegskqexuq4"]
 
 [ext_resource type="Texture2D" uid="uid://5wxugo3g2ylj" path="res://images/Lose1.png" id="1_go0kq"]
+[ext_resource type="Script" uid="uid://5m8ak4ovrgxe" path="res://scripts/lose1.gd" id="2_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g6v6y"]
-size = Vector2(970, 162.25055)
+size = Vector2(476, 162.25055)
 
 [node name="Lose1" type="Node2D" unique_id=1549362962]
+script = ExtResource("2_script")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=644460830]
 position = Vector2(612.75, 324.50003)
 scale = Vector2(0.5, 0.4992284)
 texture = ExtResource("1_go0kq")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D" unique_id=627198082]
-position = Vector2(-46.5, 426.65906)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=627198082]
+position = Vector2(592, 542)
 shape = SubResource("RectangleShape2D_g6v6y")
