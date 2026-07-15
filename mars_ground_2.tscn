@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://ypwj30l083da" path="res://images/Red.png" id="5_ey4r8"]
 [ext_resource type="Script" uid="uid://btwusxo00eegq" path="res://scripts/red_line.gd" id="5_qn11y"]
 [ext_resource type="Texture2D" uid="uid://cppyxnve0d2rq" path="res://images/martian.png" id="6_ognt2"]
+[ext_resource type="Texture2D" uid="uid://dcojmu8xm7hmj" path="res://images/mechanical glove.png" id="7_mech_glove"]
+[ext_resource type="Texture2D" uid="uid://kminpuem3sw0" path="res://images/flower vase.png" id="8_flower_vase"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_g6v6y"]
 animations = [{
@@ -90,6 +92,12 @@ size = Vector2(119.5, 317.5)
 vertices = PackedVector2Array(1207.3516, 486.9375, 2.828125, 481.04688, 9.2265625, 401.9297, 1201.6016, 394.0625)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1211, 384, 1218, 497, -8, 491)])
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mech_glove"]
+size = Vector2(200, 200)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_flower_vase"]
+size = Vector2(250, 300)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g6v6y"]
 size = Vector2(1195.6377, 1247.2781)
@@ -208,6 +216,22 @@ flip_h = true
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=1818950140]
 navigation_polygon = SubResource("NavigationPolygon_pqk1g")
+
+[node name="MechanicalGlove" type="Sprite2D" parent="." unique_id=1234567890]
+position = Vector2(200, 400)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("7_mech_glove")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MechanicalGlove" unique_id=1234567891]
+shape = SubResource("RectangleShape2D_mech_glove")
+
+[node name="FlowerVase" type="Sprite2D" parent="." unique_id=1234567892]
+position = Vector2(280, 380)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("8_flower_vase")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FlowerVase" unique_id=1234567893]
+shape = SubResource("RectangleShape2D_flower_vase")
 
 [node name="RedLine" type="Area2D" parent="." unique_id=348315752]
 script = ExtResource("5_qn11y")

@@ -9,7 +9,9 @@ static var picked_item_ids: Dictionary = {}
 static var ITEM_DEFINITIONS: Dictionary = {
 	"FireExtinguisher": ItemData.new("fire_extinguisher", "Fire Extinguisher", "res://images/fire extinguisher.png"),
 	"TallChair": ItemData.new("tall_chair", "Tall Chair", "res://images/tall chair.png"),
-	"RemoteForGlove": ItemData.new("remote_for_glove", "Remote for Glove", "res://images/remote for glove.png")
+	"RemoteForGlove": ItemData.new("remote_for_glove", "Remote for Glove", "res://images/remote for glove.png"),
+	"MechanicalGlove": ItemData.new("mechanical_glove", "Mechanical Glove", "res://images/mechanical glove.png"),
+	"FlowerVase": ItemData.new("flower_vase", "Flower Vase", "res://images/flower vase.png")
 }
 
 static func _static_init() -> void:
