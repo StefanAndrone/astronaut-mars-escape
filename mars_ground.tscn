@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://c427cm3k4wm7y" path="res://images/tall chair.png" id="5_mvtox"]
 [ext_resource type="Texture2D" uid="uid://70swr61e63f6" path="res://images/remote for glove.png" id="6_o12ty"]
 [ext_resource type="Texture2D" uid="uid://bxlwl1qpr1et4" path="res://images/brown.png" id="7_r7cvp"]
+[ext_resource type="Texture2D" uid="uid://2gumh5c7g0cg" path="res://images/glove sprite frame.png" id="9_6m24r"]
+[ext_resource type="Texture2D" uid="uid://c8250qrdy11am" path="res://images/tall chair sprite frame.png" id="10_a1a07"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4vqjs"]
 atlas = ExtResource("3_4vqjs")
@@ -88,6 +90,116 @@ size = Vector2(200.96127, 413.28687)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jj2rh"]
 size = Vector2(357.14258, 372.88153)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_a1a07"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 0, 687, 39)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_13rjn"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 0, 687, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qkitu"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 40, 687, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uortp"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 80, 687, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r5qk3"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 120, 687, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t0lse"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 160, 687, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cwuwd"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 200, 687, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0cpj8"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 240, 687, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_07ay7"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 280, 687, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_esjfr"]
+atlas = ExtResource("9_6m24r")
+region = Rect2(0, 320, 687, 40)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_l3vef"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a1a07")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_13rjn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qkitu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uortp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r5qk3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t0lse")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cwuwd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0cpj8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_07ay7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_esjfr")
+}],
+"loop": 1,
+"name": &"punching",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6eaa8"]
+atlas = ExtResource("10_a1a07")
+region = Rect2(332, 0, 166, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ybih"]
+atlas = ExtResource("10_a1a07")
+region = Rect2(166, 0, 166, 500)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g6v6y"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6eaa8")
+}],
+"loop": 1,
+"name": &"with ground",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ybih")
+}],
+"loop": 1,
+"name": &"with no ground",
+"speed": 5.0
+}]
+
 [node name="MarsGround" type="Node2D" unique_id=1291509038]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1832063404]
@@ -153,3 +265,19 @@ offset = Vector2(1429, -453)
 position = Vector2(1100.9999, 439.00006)
 scale = Vector2(0.14264911, 0.1487604)
 texture = ExtResource("4_l3vef")
+
+[node name="PlacedPunchglove" type="AnimatedSprite2D" parent="." unique_id=343752727]
+visible = false
+position = Vector2(484, 482)
+scale = Vector2(1, 1.9305556)
+sprite_frames = SubResource("SpriteFrames_l3vef")
+animation = &"punching"
+frame = 6
+frame_progress = 0.674892
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=807361677]
+visible = false
+position = Vector2(1040, 374.00003)
+scale = Vector2(2.2771082, 1.272)
+sprite_frames = SubResource("SpriteFrames_g6v6y")
+animation = &"with ground"
