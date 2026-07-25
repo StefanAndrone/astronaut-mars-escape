@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cppyxnve0d2rq" path="res://images/martian.png" id="6_ognt2"]
 [ext_resource type="Texture2D" uid="uid://dcojmu8xm7hmj" path="res://images/mechanical glove.png" id="7_mech_glove"]
 [ext_resource type="Texture2D" uid="uid://kminpuem3sw0" path="res://images/flower vase.png" id="8_flower_vase"]
+[ext_resource type="Texture2D" uid="uid://bi5mpbcuprl23" path="res://images/fire extinguisher frame.png" id="10_emolc"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_g6v6y"]
 animations = [{
@@ -178,6 +179,82 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_2hhbu"]
+atlas = ExtResource("10_emolc")
+region = Rect2(0, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vh6ht"]
+atlas = ExtResource("10_emolc")
+region = Rect2(0, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j7vxv"]
+atlas = ExtResource("10_emolc")
+region = Rect2(171, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7l0oa"]
+atlas = ExtResource("10_emolc")
+region = Rect2(342, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krpuy"]
+atlas = ExtResource("10_emolc")
+region = Rect2(513, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nx1ue"]
+atlas = ExtResource("10_emolc")
+region = Rect2(0, 181, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_di44o"]
+atlas = ExtResource("10_emolc")
+region = Rect2(171, 181, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wiew6"]
+atlas = ExtResource("10_emolc")
+region = Rect2(342, 181, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ialr6"]
+atlas = ExtResource("10_emolc")
+region = Rect2(513, 181, 171, 181)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wb3vx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2hhbu")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vh6ht")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j7vxv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7l0oa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krpuy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nx1ue")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_di44o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wiew6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ialr6")
+}],
+"loop": 1,
+"name": &"rolling",
+"speed": 8.0
+}]
+
 [node name="MarsGround2" type="Node2D" unique_id=1299473091]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=965572796]
@@ -260,3 +337,9 @@ visible = false
 position = Vector2(670.5, 318)
 scale = Vector2(0.2093023, 0.015432108)
 texture = ExtResource("5_ey4r8")
+
+[node name="PlacedExtinguisher" type="AnimatedSprite2D" parent="." unique_id=1700117811]
+position = Vector2(37, 296.00003)
+scale = Vector2(0.8976606, 0.8989795)
+sprite_frames = SubResource("SpriteFrames_wb3vx")
+animation = &"idle"

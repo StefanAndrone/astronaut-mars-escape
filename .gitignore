@@ -5,3 +5,6 @@ tools/
 prompt.txt
 image.png
 .env
+.claude
+.clinerules
+plan.txt

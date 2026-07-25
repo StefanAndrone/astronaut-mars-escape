@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://70swr61e63f6" path="res://images/remote for glove.png" id="6_o12ty"]
 [ext_resource type="Texture2D" uid="uid://bxlwl1qpr1et4" path="res://images/brown.png" id="7_r7cvp"]
 [ext_resource type="Texture2D" uid="uid://2gumh5c7g0cg" path="res://images/glove sprite frame.png" id="9_6m24r"]
+[ext_resource type="Texture2D" uid="uid://bi5mpbcuprl23" path="res://images/fire extinguisher frame.png" id="10_13rjn"]
 [ext_resource type="Texture2D" uid="uid://c8250qrdy11am" path="res://images/tall chair sprite frame.png" id="10_a1a07"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4vqjs"]
@@ -173,6 +174,88 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4yk33"]
+size = Vector2(680.00024, 92.71942)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2hhbu"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(0, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vh6ht"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(0, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j7vxv"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(171, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7l0oa"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(342, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krpuy"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(513, 0, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nx1ue"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(0, 181, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_di44o"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(171, 181, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wiew6"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(342, 181, 171, 181)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ialr6"]
+atlas = ExtResource("10_13rjn")
+region = Rect2(513, 181, 171, 181)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wb3vx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2hhbu")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vh6ht")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j7vxv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7l0oa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krpuy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nx1ue")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_di44o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wiew6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ialr6")
+}],
+"loop": 1,
+"name": &"rolling",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uojbh"]
+size = Vector2(333.08807, 220.24976)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_6eaa8"]
 atlas = ExtResource("10_a1a07")
 region = Rect2(332, 0, 166, 500)
@@ -199,6 +282,9 @@ animations = [{
 "name": &"with no ground",
 "speed": 5.0
 }]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_otouo"]
+size = Vector2(247.68257, 140.72325)
 
 [node name="MarsGround" type="Node2D" unique_id=1291509038]
 
@@ -271,13 +357,45 @@ visible = false
 position = Vector2(484, 482)
 scale = Vector2(1, 1.9305556)
 sprite_frames = SubResource("SpriteFrames_l3vef")
-animation = &"punching"
-frame = 6
-frame_progress = 0.674892
+animation = &"idle"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=807361677]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlacedPunchglove" unique_id=491755273]
 visible = false
-position = Vector2(1040, 374.00003)
-scale = Vector2(2.2771082, 1.272)
+position = Vector2(-140, -23.05037)
+scale = Vector2(0.99999964, 0.99999964)
+shape = SubResource("RectangleShape2D_4yk33")
+
+[node name="PlacedExtinguisher" type="AnimatedSprite2D" parent="." unique_id=1768172750]
+visible = false
+position = Vector2(365, 470)
+scale = Vector2(0.8976606, 0.89897954)
+sprite_frames = SubResource("SpriteFrames_wb3vx")
+animation = &"rolling"
+frame_progress = 0.002128903
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlacedExtinguisher" unique_id=962430259]
+position = Vector2(67.39746, -23.359772)
+shape = SubResource("RectangleShape2D_uojbh")
+
+[node name="PlacedRamp" type="AnimatedSprite2D" parent="." unique_id=807361677]
+visible = false
+position = Vector2(856, 374)
+scale = Vector2(2.2771082, 1.2360001)
 sprite_frames = SubResource("SpriteFrames_g6v6y")
 animation = &"with ground"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlacedRamp" unique_id=468234283]
+visible = false
+position = Vector2(-39.084656, 56.2106)
+shape = SubResource("RectangleShape2D_otouo")
+
+[node name="Marker1" type="Marker2D" parent="PlacedRamp" unique_id=2109745020]
+position = Vector2(-77.291016, 116.50485)
+
+[node name="Marker2" type="Marker2D" parent="PlacedRamp" unique_id=1900019739]
+position = Vector2(-32.058205, 102.75081)
+
+[node name="Marker3" type="Marker2D" parent="PlacedRamp" unique_id=2062119094]
+position = Vector2(81.68255, 46.925564)
+
+[node name="Node3D" type="Node3D" parent="." unique_id=382057108]

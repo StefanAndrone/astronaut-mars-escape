@@ -5,6 +5,11 @@ const MAX_SLOTS: int = 10
 
 static var slots: Array[ItemData] = []
 static var picked_item_ids: Dictionary = {}
+static var placed_ramp_visible: bool = false
+static var placed_ramp_animation: StringName = &"with ground"
+static var placed_punchglove_visible: bool = false
+static var placed_extinguisher_visible: bool = false
+static var extinguisher_launched: bool = false
 
 static var ITEM_DEFINITIONS: Dictionary = {
 	"FireExtinguisher": ItemData.new("fire_extinguisher", "Fire Extinguisher", "res://images/fire extinguisher.png"),
@@ -18,6 +23,7 @@ static func _static_init() -> void:
 	slots.resize(MAX_SLOTS)
 	for i: int in range(MAX_SLOTS):
 		slots[i] = null
+	extinguisher_launched = false
 
 static func find_first_empty_slot() -> int:
 	for i: int in range(MAX_SLOTS):
@@ -40,3 +46,12 @@ static func add_item_by_node_name(node_name: String) -> bool:
 
 static func has_item(item_id: String) -> bool:
 	return picked_item_ids.has(item_id)
+
+static func remove_item_at(slot_index: int) -> ItemData:
+	if slot_index < 0 or slot_index >= MAX_SLOTS:
+		return null
+	var item: ItemData = slots[slot_index]
+	if item == null:
+		return null
+	slots[slot_index] = null
+	return item
