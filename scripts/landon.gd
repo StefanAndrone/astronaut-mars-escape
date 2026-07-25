@@ -9,6 +9,7 @@ class_name Landon
 var is_walking: bool = false
 var inventory_ui: InventoryUI = null
 var pending_pickup_item_name: String = ""
+var is_launching: bool = false
 
 const PICKUP_DISTANCE: float = 120.0
 
@@ -42,6 +43,8 @@ func remove_already_picked_items() -> void:
 				node.queue_free()
 
 func _input(event: InputEvent) -> void:
+	if is_launching:
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var mouse_pos: Vector2 = get_global_mouse_position()
 		if try_use_selected_item_on_placeable(mouse_pos) or try_use_selected_item_on_ramp(mouse_pos) or try_use_selected_item_on_remote(mouse_pos):
@@ -103,6 +106,8 @@ func is_mouse_over_collision(collision_path: NodePath, mouse_pos: Vector2) -> bo
 	return rectangle.get_rect().has_point(collision_shape.to_local(mouse_pos))
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_launching:
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var mouse_pos: Vector2 = get_global_mouse_position()
 		if try_handle_arrow_click(mouse_pos):
@@ -194,6 +199,9 @@ func launch_extinguisher_sequence() -> void:
 	if placed_punchglove == null or placed_extinguisher == null or ramp == null:
 		return
 	
+	# Block all input/movement during launch
+	is_launching = true
+	
 	# Mark as launched to prevent re-triggering
 	InventoryData.extinguisher_launched = true
 	
@@ -202,7 +210,7 @@ func launch_extinguisher_sequence() -> void:
 	placed_punchglove.play("punching")
 	InventoryData.placed_punchglove_visible = true
 	
-	# 2. Start extinguisher "rolling" animation and movement (delayed 0.5s)
+	# 2. Start extinguisher "rolling" animation and movement (delayed 0.13s)
 	# Extinguisher starts from its current idle position and moves toward ramp
 	await get_tree().create_timer(0.13).timeout
 	if not is_instance_valid(placed_extinguisher):
@@ -218,13 +226,29 @@ func launch_extinguisher_sequence() -> void:
 	# 4. Animate extinguisher along trajectory using Tween
 	animate_extinguisher_along_path(placed_extinguisher, waypoints)
 	
-	# 5. Hide extinguisher after animation completes (handled in tween callback)
-	# 6. Optionally: play punchglove "idle" after punching animation finishes
+	# 5. Optionally: play punchglove "idle" after punching animation finishes
 	var punch_duration: float = placed_punchglove.sprite_frames.get_animation_speed("punching") > 0 and placed_punchglove.sprite_frames.get_frame_count("punching") > 0
 	var punch_anim_time: float = placed_punchglove.sprite_frames.get_frame_count("punching") / placed_punchglove.sprite_frames.get_animation_speed("punching")
 	await get_tree().create_timer(punch_anim_time).timeout
 	if is_instance_valid(placed_punchglove):
 		placed_punchglove.play("idle")
+	
+	# 6. Wait for extinguisher to finish trajectory and hide, then change scene
+	# The tween callback in animate_extinguisher_along_path calls hide_extinguisher
+	# We'll add a small delay after that and then change scene
+	await get_tree().create_timer(0.5).timeout
+	custom_change_of_scene()
+
+
+func custom_change_of_scene() -> void:
+	"""Changes scene from mars_ground to mars_ground_2 and calls do_nothing()"""
+	get_tree().change_scene_to_file("res://mars_ground_2.tscn")
+	do_nothing()
+
+
+func do_nothing() -> void:
+	"""Placeholder function called after scene change"""
+	pass
 
 
 func calculate_ramp_trajectory(ramp: AnimatedSprite2D, extinguisher_start_pos: Vector2) -> Array[Vector2]:
@@ -367,6 +391,8 @@ func try_pickup_pending_item() -> void:
 			inventory_ui.refresh()
 
 func _physics_process(_delta: float) -> void:
+	if is_launching:
+		return
 	if nav_agent.is_navigation_finished():
 		if pending_pickup_item_name != "":
 			try_pickup_pending_item()
