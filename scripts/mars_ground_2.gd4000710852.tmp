@@ -1,0 +1,94 @@
+extends Node2D
+
+@onready var landon: CharacterBody2D = $Landon
+@onready var placed_extinguisher: AnimatedSprite2D = $PlacedExtinguisher
+@onready var start_marker: Marker2D = $PlacedExtinguisher/Start
+@onready var middle_marker: Marker2D = $PlacedExtinguisher/Marker2D
+@onready var end_marker: Marker2D = $PlacedExtinguisher/End
+@onready var martian: AnimatedSprite2D = $FirstMartian
+@onready var red_line: Area2D = $RedLine
+
+func _ready() -> void:
+	if InventoryData.martian_defeated:
+		if is_instance_valid(martian):
+			martian.queue_free()
+		if is_instance_valid(red_line):
+			red_line.queue_free()
+		if is_instance_valid(placed_extinguisher):
+			placed_extinguisher.visible = false
+		if is_instance_valid(landon):
+			landon.visible = true
+			landon.set_process(true)
+			landon.set_physics_process(true)
+		return
+
+	if InventoryData.extinguisher_launched:
+		call_deferred("_hide_landon")
+		animate_extinguisher_to_martian()
+		InventoryData.extinguisher_launched = false
+	else:
+		if is_instance_valid(landon):
+			landon.visible = true
+			landon.set_process(true)
+			landon.set_physics_process(true)
+
+
+func _hide_landon() -> void:
+	if is_instance_valid(landon):
+		landon.visible = false
+		landon.set_process(false)
+		landon.set_physics_process(false)
+		landon.velocity = Vector2.ZERO
+
+
+func animate_extinguisher_to_martian() -> void:
+	if not is_instance_valid(placed_extinguisher):
+		return
+	
+	var end_pos: Vector2 = end_marker.global_position
+	var start_pos: Vector2 = start_marker.global_position
+	
+	placed_extinguisher.global_position = start_pos
+	placed_extinguisher.visible = true
+	placed_extinguisher.play("rolling")
+	
+	var tween: Tween = create_tween()
+	var duration: float = 2.0
+	
+	tween.tween_property(placed_extinguisher, "global_position", end_pos, duration)
+	tween.tween_callback(_on_extinguisher_hit_martian).set_delay(0.1)
+
+
+func _on_extinguisher_hit_martian() -> void:
+	if is_instance_valid(placed_extinguisher):
+		placed_extinguisher.stop()
+		placed_extinguisher.visible = false
+
+	# Create cloud sprite
+	var cloud: Sprite2D = Sprite2D.new()
+	cloud.texture = load("res://images/cloud.png")
+	cloud.global_position = martian.global_position
+	cloud.scale = Vector2.ZERO
+	add_child(cloud)
+
+	# 1. Cloud appears, increases, and fades
+	var cloud_tween: Tween = create_tween()
+	cloud_tween.set_parallel(true)
+	cloud_tween.tween_property(cloud, "scale", Vector2(1.8, 1.8), 0.8)
+	cloud_tween.tween_property(cloud, "modulate:a", 0.0, 0.8)
+	await cloud_tween.finished
+	cloud.queue_free()
+
+	# 2. Martian turns horizontal (defeated)
+	martian.rotation_degrees = 90.0
+
+	# 3. Martian fades out
+	var martian_tween: Tween = create_tween()
+	martian_tween.tween_property(martian, "modulate:a", 0.0, 1.0)
+	await martian_tween.finished
+
+	# Mark Martian as defeated globally
+	InventoryData.martian_defeated = true
+
+	# 4. Change back to mars_ground.tscn
+	get_tree().change_scene_to_file("res://mars_ground.tscn")

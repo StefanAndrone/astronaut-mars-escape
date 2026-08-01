@@ -1,0 +1,9 @@
+extends Sprite2D
+
+func advance_scene():
+	get_tree().change_scene_to_file("res://broken spaceship.tscn")
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			advance_scene()

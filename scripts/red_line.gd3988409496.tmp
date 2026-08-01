@@ -5,12 +5,13 @@ extends Area2D
 @onready var landon: CharacterBody2D = get_node("../Landon")
 
 func _ready() -> void:
+	if InventoryData.martian_defeated:
+		queue_free()
+		return
 	laser.visible = false
 	body_entered.connect(_on_body_entered)
 
 func _on_body_entered(body: Node2D) -> void:
-	if InventoryData.martian_defeated:
-		return
 	if body.name != "Landon":
 		return
 

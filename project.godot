@@ -21,7 +21,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-MCPRuntimeProbe="*uid://bsg12huaf1u5i"
+GDLLMGameAgent="*res://addons/gdllm-godot-agentic-harness/gdllm_game_agent.gd"
+_fennara_game_capture="*res://addons/fennara/runtime/game_capture_helper.gd"
 
 [editor_plugins]
 
