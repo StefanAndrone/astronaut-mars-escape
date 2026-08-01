@@ -14,10 +14,13 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.name != "Landon":
 		return
 
-	landon.get_node("AnimatedSprite2D").play("idle")
-	landon.velocity = Vector2.ZERO
-	landon.set_deferred("monitoring", false)
-	landon.get_node("NavigationAgent2D").target_position = landon.global_position
+	if landon.has_method("disable_control"):
+		landon.disable_control()
+	else:
+		landon.get_node("AnimatedSprite2D").play("idle")
+		landon.velocity = Vector2.ZERO
+		landon.set_deferred("monitoring", false)
+		landon.get_node("NavigationAgent2D").target_position = landon.global_position
 
 	# Martian turns to face astronaut
 	martian.flip_h = true

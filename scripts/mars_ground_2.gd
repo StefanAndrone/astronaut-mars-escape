@@ -9,6 +9,10 @@ extends Node2D
 @onready var red_line: Area2D = $RedLine
 
 func _ready() -> void:
+	var right_arrow: Node = get_node_or_null("RightArrow")
+	if right_arrow != null and right_arrow is CanvasItem:
+		(right_arrow as CanvasItem).visible = InventoryData.martian_defeated
+
 	if InventoryData.martian_defeated:
 		# Martian is defeated - scene is safe, remove danger & martian
 		if is_instance_valid(first_martian):

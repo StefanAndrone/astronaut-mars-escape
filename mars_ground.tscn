@@ -77,10 +77,10 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qsrdx"]
 size = Vector2(119.5, 317.5)
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_4vqjs"]
-vertices = PackedVector2Array(1207.3516, 486.9375, 2.828125, 481.04688, 9.2265625, 401.9297, 1201.6016, 394.0625)
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_13rjn"]
+vertices = PackedVector2Array(-10, 380, 1250, 380, 1250, 580, -10, 580)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(0, 392, 1211, 384, 1218, 497, -8, 491)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-10, 380, 1250, 380, 1250, 580, -10, 580)])
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wb3vx"]
 size = Vector2(257.90848, 385.56757)
@@ -310,7 +310,7 @@ position = Vector2(0, -120)
 shape = SubResource("RectangleShape2D_qsrdx")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=1102424658]
-navigation_polygon = SubResource("NavigationPolygon_4vqjs")
+navigation_polygon = SubResource("NavigationPolygon_13rjn")
 
 [node name="FireExtinguisher" type="Sprite2D" parent="." unique_id=1204327268]
 position = Vector2(367.76, 427.775)

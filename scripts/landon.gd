@@ -9,7 +9,9 @@ class_name Landon
 var is_walking: bool = false
 var inventory_ui: InventoryUI = null
 var pending_pickup_item_name: String = ""
+var pending_pickup_placed_punchglove: bool = false
 var is_launching: bool = false
+var is_disabled: bool = false
 
 const PICKUP_DISTANCE: float = 120.0
 
@@ -42,8 +44,25 @@ func remove_already_picked_items() -> void:
 			if node != null:
 				node.queue_free()
 
+func disable_control() -> void:
+	is_disabled = true
+	is_walking = false
+	velocity = Vector2.ZERO
+	pending_pickup_item_name = ""
+	pending_pickup_placed_punchglove = false
+	if is_instance_valid(animated_sprite):
+		animated_sprite.play("idle")
+	if is_instance_valid(nav_agent):
+		nav_agent.target_position = global_position
+	if is_instance_valid(inventory_ui):
+		inventory_ui.freeze()
+	set_process(false)
+	set_physics_process(false)
+	set_process_input(false)
+	set_process_unhandled_input(false)
+
 func _input(event: InputEvent) -> void:
-	if is_launching:
+	if is_launching or is_disabled:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var mouse_pos: Vector2 = get_global_mouse_position()
@@ -106,12 +125,25 @@ func is_mouse_over_collision(collision_path: NodePath, mouse_pos: Vector2) -> bo
 	return rectangle.get_rect().has_point(collision_shape.to_local(mouse_pos))
 
 func _unhandled_input(event: InputEvent) -> void:
-	if is_launching:
+	if is_launching or is_disabled:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var mouse_pos: Vector2 = get_global_mouse_position()
 		if try_handle_arrow_click(mouse_pos):
 			return
+		
+		# Check if clicking on placed punchglove to pick it up after martian defeat
+		if InventoryData.martian_defeated and is_mouse_over_collision("../PlacedPunchglove/CollisionShape2D", mouse_pos):
+			var placed_punchglove: AnimatedSprite2D = get_node_or_null("../PlacedPunchglove") as AnimatedSprite2D
+			if placed_punchglove != null and placed_punchglove.visible:
+				pending_pickup_placed_punchglove = true
+				pending_pickup_item_name = ""
+				# Walk to the left base of the glove stand rather than the far right tip
+				var pickup_target: Vector2 = placed_punchglove.global_position
+				pickup_target.x -= 200.0
+				nav_agent.target_position = pickup_target
+				return
+
 		for item_name: String in InventoryData.ITEM_DEFINITIONS.keys():
 			var item_node: Node = get_node_or_null("../" + item_name)
 			if item_node == null or not item_node is Sprite2D:
@@ -121,9 +153,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				if InventoryData.picked_item_ids.has(InventoryData.ITEM_DEFINITIONS[item_name].item_id):
 					return
 				pending_pickup_item_name = item_name
+				pending_pickup_placed_punchglove = false
 				nav_agent.target_position = item_node.global_position
 				return
 		pending_pickup_item_name = ""
+		pending_pickup_placed_punchglove = false
 		nav_agent.target_position = mouse_pos
 
 func try_use_selected_item_on_ramp(mouse_pos: Vector2) -> bool:
@@ -163,13 +197,8 @@ func try_use_selected_item_on_remote(mouse_pos: Vector2) -> bool:
 	if selected_item == null or selected_item.item_id != "remote_for_glove":
 		return false
 	
-	# Check if ramp is in "with ground" state (vase placed)
-	var ramp: AnimatedSprite2D = get_node_or_null("../PlacedRamp") as AnimatedSprite2D
-	if ramp == null or not ramp.visible or ramp.animation != &"with ground":
-		return false
-	
-	# Check if extinguisher hasn't been launched yet
-	if InventoryData.extinguisher_launched:
+	# Remote no longer works if martian is already defeated or extinguisher was launched
+	if InventoryData.martian_defeated or InventoryData.extinguisher_launched:
 		return false
 	
 	# Check if click is on punchglove or extinguisher collision area
@@ -364,19 +393,44 @@ func try_handle_arrow_click(mouse_pos: Vector2) -> bool:
 	if right_arrow != null and right_arrow is Sprite2D:
 		var sprite: Sprite2D = right_arrow as Sprite2D
 		if sprite.get_rect().has_point(sprite.to_local(mouse_pos)):
-			get_tree().change_scene_to_file("res://mars_ground_2.tscn")
+			var scene_path: String = get_tree().current_scene.scene_file_path
+			if scene_path == "res://mars_ground.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_2.tscn")
+			elif scene_path == "res://mars_ground_2.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_3.tscn")
 			return true
 
 	var left_arrow: Node = get_node_or_null("../LeftArrow")
 	if left_arrow != null and left_arrow is Sprite2D:
 		var sprite: Sprite2D = left_arrow as Sprite2D
 		if sprite.get_rect().has_point(sprite.to_local(mouse_pos)):
-			get_tree().change_scene_to_file("res://mars_ground.tscn")
+			var scene_path: String = get_tree().current_scene.scene_file_path
+			if scene_path == "res://mars_ground_2.tscn":
+				get_tree().change_scene_to_file("res://mars_ground.tscn")
+			elif scene_path == "res://mars_ground_3.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_2.tscn")
 			return true
 
 	return false
 
 func try_pickup_pending_item() -> void:
+	if pending_pickup_placed_punchglove:
+		pending_pickup_placed_punchglove = false
+		var placed_punchglove: AnimatedSprite2D = get_node_or_null("../PlacedPunchglove") as AnimatedSprite2D
+		if placed_punchglove == null or not placed_punchglove.visible:
+			return
+		var pickup_target: Vector2 = placed_punchglove.global_position
+		pickup_target.x -= 200.0
+		var dist: float = global_position.distance_to(pickup_target)
+		if dist > PICKUP_DISTANCE:
+			return
+		if InventoryData.return_item_by_id("mechanical_glove"):
+			placed_punchglove.visible = false
+			InventoryData.placed_punchglove_visible = false
+			if inventory_ui != null:
+				inventory_ui.refresh()
+		return
+
 	var item_name: String = pending_pickup_item_name
 	pending_pickup_item_name = ""
 	var item_node: Node = get_node_or_null("../" + item_name)
@@ -391,10 +445,10 @@ func try_pickup_pending_item() -> void:
 			inventory_ui.refresh()
 
 func _physics_process(_delta: float) -> void:
-	if is_launching:
+	if is_launching or is_disabled:
 		return
 	if nav_agent.is_navigation_finished():
-		if pending_pickup_item_name != "":
+		if pending_pickup_placed_punchglove or pending_pickup_item_name != "":
 			try_pickup_pending_item()
 		if is_walking:
 			is_walking = false

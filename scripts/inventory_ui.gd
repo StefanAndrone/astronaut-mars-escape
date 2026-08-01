@@ -11,6 +11,7 @@ var slot_backgrounds: Array[ColorRect] = []
 var selection_highlight: ColorRect
 var tooltip: Label
 var selected_slot: int = -1
+var is_frozen: bool = false
 
 func _init() -> void:
 	layer = 10
@@ -81,7 +82,15 @@ func build_ui() -> void:
 		if selection_highlight == null:
 			selection_highlight = highlight
 
+func freeze() -> void:
+	is_frozen = true
+	clear_selection()
+	if is_instance_valid(tooltip):
+		tooltip.hide()
+
 func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
+	if is_frozen:
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if InventoryData.slots[slot_index] == null:
 			clear_selection()
@@ -90,6 +99,8 @@ func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 		get_viewport().set_input_as_handled()
 
 func _on_slot_mouse_entered(slot_index: int) -> void:
+	if is_frozen:
+		return
 	var item: ItemData = InventoryData.slots[slot_index]
 	if item == null:
 		return
@@ -130,6 +141,8 @@ func consume_selected_item() -> bool:
 	return true
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_frozen:
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		clear_selection()
 

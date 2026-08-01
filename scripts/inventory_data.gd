@@ -45,6 +45,33 @@ static func add_item_by_node_name(node_name: String) -> bool:
 	picked_item_ids[item.item_id] = true
 	return true
 
+static func return_item_to_inventory(node_name: String) -> bool:
+	if not ITEM_DEFINITIONS.has(node_name):
+		return false
+	var item: ItemData = ITEM_DEFINITIONS[node_name]
+	var slot: int = find_first_empty_slot()
+	if slot == -1:
+		return false
+	slots[slot] = item
+	picked_item_ids[item.item_id] = true
+	return true
+
+static func return_item_by_id(item_id: String) -> bool:
+	var target_item: ItemData = null
+	for item_name: String in ITEM_DEFINITIONS.keys():
+		var def: ItemData = ITEM_DEFINITIONS[item_name]
+		if def.item_id == item_id:
+			target_item = def
+			break
+	if target_item == null:
+		return false
+	var slot: int = find_first_empty_slot()
+	if slot == -1:
+		return false
+	slots[slot] = target_item
+	picked_item_ids[item_id] = true
+	return true
+
 static func has_item(item_id: String) -> bool:
 	return picked_item_ids.has(item_id)
 
