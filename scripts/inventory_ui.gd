@@ -96,7 +96,9 @@ func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 			clear_selection()
 		else:
 			select_slot(slot_index)
-		get_viewport().set_input_as_handled()
+		var vp: Viewport = get_viewport()
+		if vp != null:
+			vp.set_input_as_handled()
 
 func _on_slot_mouse_entered(slot_index: int) -> void:
 	if is_frozen:

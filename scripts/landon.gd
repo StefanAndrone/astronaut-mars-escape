@@ -8,8 +8,10 @@ class_name Landon
 
 var is_walking: bool = false
 var inventory_ui: InventoryUI = null
+var dialogue_ui: DialogueUI = null
 var pending_pickup_item_name: String = ""
 var pending_pickup_placed_punchglove: bool = false
+var pending_talk_nice_martian: bool = false
 var is_launching: bool = false
 var is_disabled: bool = false
 
@@ -66,8 +68,15 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var mouse_pos: Vector2 = get_global_mouse_position()
+		if try_handle_arrow_click(mouse_pos):
+			var vp: Viewport = get_viewport()
+			if vp != null:
+				vp.set_input_as_handled()
+			return
 		if try_use_selected_item_on_placeable(mouse_pos) or try_use_selected_item_on_ramp(mouse_pos) or try_use_selected_item_on_remote(mouse_pos):
-			get_viewport().set_input_as_handled()
+			var vp: Viewport = get_viewport()
+			if vp != null:
+				vp.set_input_as_handled()
 
 func restore_placed_ramp_state() -> void:
 	var ramp: AnimatedSprite2D = get_node_or_null("../PlacedRamp") as AnimatedSprite2D
@@ -132,6 +141,27 @@ func _unhandled_input(event: InputEvent) -> void:
 		if try_handle_arrow_click(mouse_pos):
 			return
 		
+		# Check if clicking on NiceMartian in scene 4
+		var nice_martian: Node = get_node_or_null("../NiceMartian")
+		if nice_martian != null and nice_martian is CanvasItem:
+			var click_hit: bool = false
+			if nice_martian is Sprite2D:
+				var sprite: Sprite2D = nice_martian as Sprite2D
+				click_hit = sprite.get_rect().has_point(sprite.to_local(mouse_pos))
+			elif nice_martian is AnimatedSprite2D:
+				var anim_sprite: AnimatedSprite2D = nice_martian as AnimatedSprite2D
+				var martian_rect: Rect2 = Rect2(-62.5, -125.0, 125.0, 250.0)
+				click_hit = martian_rect.has_point(anim_sprite.to_local(mouse_pos))
+
+			if click_hit:
+				pending_talk_nice_martian = true
+				pending_pickup_item_name = ""
+				pending_pickup_placed_punchglove = false
+				var martian_item: CanvasItem = nice_martian as CanvasItem
+				var target_pos: Vector2 = Vector2(martian_item.global_position.x - 140.0, 480.0)
+				nav_agent.target_position = target_pos
+				return
+
 		# Check if clicking on placed punchglove to pick it up after martian defeat
 		if InventoryData.martian_defeated and is_mouse_over_collision("../PlacedPunchglove/CollisionShape2D", mouse_pos):
 			var placed_punchglove: AnimatedSprite2D = get_node_or_null("../PlacedPunchglove") as AnimatedSprite2D
@@ -398,6 +428,10 @@ func try_handle_arrow_click(mouse_pos: Vector2) -> bool:
 				get_tree().change_scene_to_file("res://mars_ground_2.tscn")
 			elif scene_path == "res://mars_ground_2.tscn":
 				get_tree().change_scene_to_file("res://mars_ground_3.tscn")
+			elif scene_path == "res://mars_ground_3.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_4.tscn")
+			elif scene_path == "res://mars_ground_4.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_5.tscn")
 			return true
 
 	var left_arrow: Node = get_node_or_null("../LeftArrow")
@@ -409,6 +443,28 @@ func try_handle_arrow_click(mouse_pos: Vector2) -> bool:
 				get_tree().change_scene_to_file("res://mars_ground.tscn")
 			elif scene_path == "res://mars_ground_3.tscn":
 				get_tree().change_scene_to_file("res://mars_ground_2.tscn")
+			elif scene_path == "res://mars_ground_4.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_3.tscn")
+			elif scene_path == "res://mars_ground_5.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_4.tscn")
+			return true
+
+	var down_arrow: Node = get_node_or_null("../DownArrow")
+	if down_arrow != null and down_arrow is Sprite2D:
+		var sprite: Sprite2D = down_arrow as Sprite2D
+		if sprite.get_rect().has_point(sprite.to_local(mouse_pos)):
+			var scene_path: String = get_tree().current_scene.scene_file_path
+			if scene_path == "res://mars_ground_3.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_6.tscn")
+			return true
+
+	var up_arrow: Node = get_node_or_null("../UpArrow")
+	if up_arrow != null and up_arrow is Sprite2D:
+		var sprite: Sprite2D = up_arrow as Sprite2D
+		if sprite.get_rect().has_point(sprite.to_local(mouse_pos)):
+			var scene_path: String = get_tree().current_scene.scene_file_path
+			if scene_path == "res://mars_ground_6.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_3.tscn")
 			return true
 
 	return false
@@ -444,10 +500,45 @@ func try_pickup_pending_item() -> void:
 		if inventory_ui != null:
 			inventory_ui.refresh()
 
+func ensure_dialogue_ui() -> DialogueUI:
+	if dialogue_ui == null:
+		dialogue_ui = get_node_or_null("DialogueUI") as DialogueUI
+	if dialogue_ui == null:
+		dialogue_ui = DialogueUI.new()
+		dialogue_ui.name = "DialogueUI"
+		add_child(dialogue_ui)
+	return dialogue_ui
+
+func start_nice_martian_dialogue() -> void:
+	var dui: DialogueUI = ensure_dialogue_ui()
+	var choices: Array[String] = [
+		"\"Please don't hurt me!!!\"",
+		"\"I need your help\"",
+		"\"Nice friends you got there\""
+	]
+	dui.show_choices(choices, _on_nice_martian_choice_selected)
+
+func _on_nice_martian_choice_selected(choice_idx: int) -> void:
+	var dui: DialogueUI = ensure_dialogue_ui()
+	var json_path: String = ""
+	match choice_idx:
+		0:
+			json_path = "res://dialogues/nice_martian_c1.json"
+		1:
+			json_path = "res://dialogues/nice_martian_c2.json"
+		2:
+			json_path = "res://dialogues/nice_martian_c3.json"
+	if not json_path.is_empty():
+		dui.start_dialogue_from_json(json_path)
+
 func _physics_process(_delta: float) -> void:
 	if is_launching or is_disabled:
 		return
 	if nav_agent.is_navigation_finished():
+		if pending_talk_nice_martian:
+			pending_talk_nice_martian = false
+			animated_sprite.flip_h = false
+			start_nice_martian_dialogue()
 		if pending_pickup_placed_punchglove or pending_pickup_item_name != "":
 			try_pickup_pending_item()
 		if is_walking:

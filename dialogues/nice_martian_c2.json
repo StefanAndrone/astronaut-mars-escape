@@ -1,0 +1,7 @@
+[
+	{"speaker": "Astronaut", "text": "I need your help. My ship crashed and my freaking battery is completely dead.", "duration": 5.0},
+	{"speaker": "Martian", "text": "I might have a spare energy core... but nothing on Mars is free, human.", "duration": 5.0},
+	{"speaker": "Astronaut", "text": "What do you want in return?", "duration": 3.0},
+	{"speaker": "Martian", "text": "There's an annoying monument nearby that offends my artistic sensibilities. Help me destroy it, and the battery is yours.", "duration": 6.5},
+	{"speaker": "Astronaut", "text": "Deal! I know what to do.", "duration": 3.5}
+]

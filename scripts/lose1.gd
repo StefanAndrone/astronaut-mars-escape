@@ -9,7 +9,9 @@ func _input(event: InputEvent) -> void:
 		# Check if click is within collision shape bounds (pos: 592, 542; size: 476, 162.25)
 		var shape_rect: Rect2 = Rect2(592 - 238, 542 - 81.125, 476, 162.25055)
 		if shape_rect.has_point(mouse_pos):
-			get_tree().root.set_input_as_handled()
+			var vp: Viewport = get_viewport()
+			if vp != null:
+				vp.set_input_as_handled()
 			reset_and_reload()
 
 func reset_and_reload() -> void:

@@ -1,0 +1,8 @@
+[
+	{"speaker": "Astronaut", "text": "Please don't hurt me!!!", "duration": 3.5},
+	{"speaker": "Martian", "text": "Hurt you? Why would I hurt you, stranger?", "duration": 4.0},
+	{"speaker": "Astronaut", "text": "Well, the last Martian I met tried to vaporize me with a giant laser!", "duration": 5.0},
+	{"speaker": "Martian", "text": "Ah, that must have been Gnorp. He's... going through a phase. I'm Zorblax, a peaceful researcher. A humble martian as you call us...", "duration": 6.0},
+	{"speaker": "Astronaut", "text": "Whew... That's a relief. I'm an astronaut from Earth.", "duration": 4.0},
+	{"speaker": "Martian", "text": "Welcome to Mars, Earthling! Well the planet YOU call Mars... Do not worry, not all of us shoot first.", "duration": 5.0}
+]
