@@ -263,7 +263,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		var martian_gun: Node = get_node_or_null("../MartianWithGun")
 		if martian_gun != null and martian_gun is AnimatedSprite2D:
 			var anim_sprite: AnimatedSprite2D = martian_gun as AnimatedSprite2D
-			var martian_rect: Rect2 = Rect2(-100.0, -150.0, 200.0, 300.0)
+			var martian_rect: Rect2
+			if InventoryData.scene6_punchglove_triggered:
+				# Disarmed Martian click shape: Upper half only
+				martian_rect = Rect2(-100.0, -150.0, 200.0, 150.0)
+			else:
+				# Full body click shape before disarmed
+				martian_rect = Rect2(-100.0, -150.0, 200.0, 300.0)
+
 			if martian_rect.has_point(anim_sprite.to_local(mouse_pos)):
 				# Don't trigger conversation if clicking with an item selected
 				if inventory_ui != null and inventory_ui.selected_slot != -1 and InventoryData.slots[inventory_ui.selected_slot] != null:
@@ -293,8 +300,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if current_scene == "res://mars_ground_6.tscn" and InventoryData.scene6_punchglove_triggered:
 			var glove6: AnimatedSprite2D = get_node_or_null("../PlacedPunchgloveOnRock") as AnimatedSprite2D
 			if glove6 != null and glove6.visible:
-				# Precise glove local rect check
-				var glove_rect: Rect2 = Rect2(-150.0, -100.0, 300.0, 200.0)
+				# Punchglove click shape: Covers punchglove and bottom half of Martian body
+				var glove_rect: Rect2 = Rect2(-250.0, -50.0, 450.0, 250.0)
 				if glove_rect.has_point(glove6.to_local(mouse_pos)):
 					pending_pickup_placed_punchglove = true
 					pending_pickup_item_name = ""
