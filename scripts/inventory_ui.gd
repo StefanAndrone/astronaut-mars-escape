@@ -142,11 +142,8 @@ func consume_selected_item() -> bool:
 	refresh()
 	return true
 
-func _unhandled_input(event: InputEvent) -> void:
-	if is_frozen:
-		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		clear_selection()
+func _unhandled_input(_event: InputEvent) -> void:
+	pass
 
 func refresh() -> void:
 	if slots.size() == 0:

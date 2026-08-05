@@ -70,11 +70,11 @@ func build_ui() -> void:
 
 	choice_panel.hide()
 
-	# 2. Astronaut Speech Box (Restored to original x=260, y=210)
+	# 2. Astronaut Speech Box (Left of Landon, above inventory bar)
 	astronaut_box = Panel.new()
 	astronaut_box.name = "AstronautBox"
 	astronaut_box.add_theme_stylebox_override("panel", style_speech)
-	astronaut_box.position = Vector2(460, 210)
+	astronaut_box.position = Vector2(280, 100)
 	astronaut_box.custom_minimum_size = Vector2(160, 60)
 	astronaut_box.size = Vector2(280, 130)
 	add_child(astronaut_box)

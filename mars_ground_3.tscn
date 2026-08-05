@@ -4,11 +4,12 @@
 [ext_resource type="Texture2D" uid="uid://16d58bpumpto" path="res://images/arrow.png" id="2_dusd3"]
 [ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="3_407xh"]
 [ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="4_lxbcd"]
+[ext_resource type="Texture2D" uid="uid://b6cp7sub56f0m" path="res://images/statue.png" id="5_dusd3"]
+[ext_resource type="Texture2D" uid="uid://b27p7b1m06djf" path="res://images/rock.png" id="6_407xh"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_ntac3"]
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_dusd3"]
 vertices = PackedVector2Array(-10, 380, 1250, 380, 1250, 580, -10, 580)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-10, 380, 1250, 380, 1250, 580, -10, 580)])
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nmfd4"]
 atlas = ExtResource("4_lxbcd")
@@ -94,9 +95,10 @@ texture = ExtResource("2_dusd3")
 flip_h = true
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=700293133]
-navigation_polygon = SubResource("NavigationPolygon_ntac3")
+navigation_polygon = SubResource("NavigationPolygon_dusd3")
 
 [node name="Landon" type="CharacterBody2D" parent="." unique_id=514142455]
+z_index = 10
 position = Vector2(90, 450)
 script = ExtResource("3_407xh")
 
@@ -122,3 +124,13 @@ position = Vector2(576, 480)
 rotation = 1.5707964
 scale = Vector2(0.14264911, 0.1487604)
 texture = ExtResource("2_dusd3")
+
+[node name="Statue" type="Sprite2D" parent="." unique_id=342750001]
+position = Vector2(850, 260)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("5_dusd3")
+
+[node name="Rock" type="Sprite2D" parent="." unique_id=364028706]
+position = Vector2(400, 470)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("6_407xh")

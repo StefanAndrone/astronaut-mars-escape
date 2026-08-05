@@ -16,5 +16,8 @@ func _input(event: InputEvent) -> void:
 
 func reset_and_reload() -> void:
 	print("reset_and_reload() called")
-	# Go back to mars_ground_2 (keep inventory)
-	get_tree().change_scene_to_file("res://mars_ground_2.tscn")
+	var current_scene_path: String = get_tree().current_scene.scene_file_path
+	if current_scene_path == "res://lose2.tscn":
+		get_tree().change_scene_to_file("res://mars_ground_6.tscn")
+	else:
+		get_tree().change_scene_to_file("res://mars_ground_2.tscn")

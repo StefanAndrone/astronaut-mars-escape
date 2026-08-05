@@ -12,6 +12,7 @@ var dialogue_ui: DialogueUI = null
 var pending_pickup_item_name: String = ""
 var pending_pickup_placed_punchglove: bool = false
 var pending_talk_nice_martian: bool = false
+var pending_talk_scene6_martian: bool = false
 var is_launching: bool = false
 var is_disabled: bool = false
 
@@ -23,6 +24,95 @@ func _ready() -> void:
 	hide_legacy_inventory_bar()
 	ensure_inventory_ui()
 	restore_placed_ramp_state()
+	restore_scene6_puzzle_state()
+
+func restore_scene6_puzzle_state() -> void:
+	var scene_path: String = get_tree().current_scene.scene_file_path
+	if scene_path != "res://mars_ground_6.tscn":
+		return
+
+	var placed_rock: Sprite2D = get_node_or_null("../PlacedRock") as Sprite2D
+	if placed_rock != null:
+		placed_rock.visible = InventoryData.placed_rock_visible
+		placed_rock.flip_h = true
+
+	var placed_glove: AnimatedSprite2D = get_node_or_null("../PlacedPunchgloveOnRock") as AnimatedSprite2D
+	if placed_glove != null:
+		placed_glove.visible = InventoryData.placed_punchglove_on_rock_visible
+		if placed_glove.visible:
+			placed_glove.play("idle")
+
+	var martian: AnimatedSprite2D = get_node_or_null("../MartianWithGun") as AnimatedSprite2D
+	if martian != null:
+		if InventoryData.scene6_punchglove_triggered:
+			martian.play("disarmed")
+
+func try_handle_scene6_item_interactions(mouse_pos: Vector2) -> bool:
+	if inventory_ui == null or inventory_ui.selected_slot == -1:
+		return false
+
+	var selected_item: ItemData = InventoryData.slots[inventory_ui.selected_slot]
+	if selected_item == null:
+		return false
+
+	var scene_path: String = get_tree().current_scene.scene_file_path
+	if scene_path != "res://mars_ground_6.tscn":
+		return false
+
+	var placed_rock: Sprite2D = get_node_or_null("../PlacedRock") as Sprite2D
+	var placed_glove: AnimatedSprite2D = get_node_or_null("../PlacedPunchgloveOnRock") as AnimatedSprite2D
+
+	# 1. Place Rock behind Martian (clicks behind/right of MartianWithGun, x > 750)
+	if selected_item.item_id == "rock" and not InventoryData.placed_rock_visible:
+		if mouse_pos.x > 750.0 and mouse_pos.y < 550.0:
+			InventoryData.placed_rock_visible = true
+			if placed_rock != null:
+				placed_rock.visible = true
+				placed_rock.flip_h = true
+				placed_rock.z_index = 5
+			inventory_ui.consume_selected_item()
+			return true
+
+	# Interactions targeting PlacedRock or placement area
+	if placed_rock != null and InventoryData.placed_rock_visible:
+		var is_hit: bool = false
+		var col_shape: CollisionShape2D = placed_rock.get_node_or_null("StaticBody2D/CollisionShape2D") as CollisionShape2D
+		if col_shape != null and col_shape.shape is RectangleShape2D:
+			var rect_shape: RectangleShape2D = col_shape.shape as RectangleShape2D
+			is_hit = rect_shape.get_rect().has_point(col_shape.to_local(mouse_pos))
+		if not is_hit:
+			# Generous fallback click area around rock position (x: 920..1120, y: 370..520)
+			is_hit = (mouse_pos.x > 880.0 and mouse_pos.x < 1150.0 and mouse_pos.y > 350.0 and mouse_pos.y < 520.0)
+
+		if is_hit:
+			# 2. Use Glue on Rock
+			if selected_item.item_id == "glue":
+				InventoryData.rock_glued = true
+				inventory_ui.consume_selected_item()
+				var dui: DialogueUI = ensure_dialogue_ui()
+				dui.start_dialogue([
+					{"speaker": "Astronaut", "text": "Now the trap is almost set.", "duration": 3.0}
+				])
+				return true
+
+			# 3. Use Mechanical Glove on Rock
+			if selected_item.item_id == "mechanical_glove":
+				if not InventoryData.rock_glued:
+					var dui: DialogueUI = ensure_dialogue_ui()
+					dui.start_dialogue([
+						{"speaker": "Astronaut", "text": "I need something to stick the glove onto the rock first.", "duration": 3.0}
+					])
+					return true
+
+				InventoryData.placed_punchglove_on_rock_visible = true
+				if placed_glove != null:
+					placed_glove.visible = true
+					placed_glove.play("idle")
+				inventory_ui.consume_selected_item()
+				return true
+
+	return false
+
 
 func hide_legacy_inventory_bar() -> void:
 	var legacy_bar: Node = get_node_or_null("../InventoryBar")
@@ -141,6 +231,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		if try_handle_arrow_click(mouse_pos):
 			return
 		
+		if try_handle_scene6_item_interactions(mouse_pos):
+			var vp: Viewport = get_viewport()
+			if vp != null:
+				vp.set_input_as_handled()
+			return
+		
 		# Check if clicking on NiceMartian in scene 4
 		var nice_martian: Node = get_node_or_null("../NiceMartian")
 		if nice_martian != null and nice_martian is CanvasItem:
@@ -155,6 +251,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 			if click_hit:
 				pending_talk_nice_martian = true
+				pending_talk_scene6_martian = false
 				pending_pickup_item_name = ""
 				pending_pickup_placed_punchglove = false
 				var martian_item: CanvasItem = nice_martian as CanvasItem
@@ -162,17 +259,51 @@ func _unhandled_input(event: InputEvent) -> void:
 				nav_agent.target_position = target_pos
 				return
 
-		# Check if clicking on placed punchglove to pick it up after martian defeat
-		if InventoryData.martian_defeated and is_mouse_over_collision("../PlacedPunchglove/CollisionShape2D", mouse_pos):
-			var placed_punchglove: AnimatedSprite2D = get_node_or_null("../PlacedPunchglove") as AnimatedSprite2D
-			if placed_punchglove != null and placed_punchglove.visible:
-				pending_pickup_placed_punchglove = true
-				pending_pickup_item_name = ""
-				# Walk to the left base of the glove stand rather than the far right tip
-				var pickup_target: Vector2 = placed_punchglove.global_position
-				pickup_target.x -= 200.0
-				nav_agent.target_position = pickup_target
-				return
+		# Check if clicking on MartianWithGun in scene 6
+		var martian_gun: Node = get_node_or_null("../MartianWithGun")
+		if martian_gun != null and martian_gun is AnimatedSprite2D:
+			var anim_sprite: AnimatedSprite2D = martian_gun as AnimatedSprite2D
+			var martian_rect: Rect2 = Rect2(-100.0, -150.0, 200.0, 300.0)
+			if martian_rect.has_point(anim_sprite.to_local(mouse_pos)):
+				# Don't trigger conversation if clicking with an item selected
+				if inventory_ui != null and inventory_ui.selected_slot != -1 and InventoryData.slots[inventory_ui.selected_slot] != null:
+					pass
+				else:
+					pending_talk_scene6_martian = true
+					pending_talk_nice_martian = false
+					pending_pickup_item_name = ""
+					pending_pickup_placed_punchglove = false
+					var target_pos: Vector2 = Vector2(anim_sprite.global_position.x - 320.0, 480.0)
+					nav_agent.target_position = target_pos
+					return
+
+		# Check if clicking on placed punchglove to pick it up in scene 1 or scene 6
+		var current_scene: String = get_tree().current_scene.scene_file_path
+		if current_scene == "res://mars_ground.tscn" and InventoryData.martian_defeated:
+			if is_mouse_over_collision("../PlacedPunchglove/CollisionShape2D", mouse_pos):
+				var placed_punchglove: AnimatedSprite2D = get_node_or_null("../PlacedPunchglove") as AnimatedSprite2D
+				if placed_punchglove != null and placed_punchglove.visible:
+					pending_pickup_placed_punchglove = true
+					pending_pickup_item_name = ""
+					var pickup_target: Vector2 = placed_punchglove.global_position
+					pickup_target.x -= 200.0
+					nav_agent.target_position = pickup_target
+					return
+
+		if current_scene == "res://mars_ground_6.tscn" and InventoryData.scene6_punchglove_triggered:
+			var glove6: AnimatedSprite2D = get_node_or_null("../PlacedPunchgloveOnRock") as AnimatedSprite2D
+			if glove6 != null and glove6.visible:
+				# Precise glove local rect check
+				var glove_rect: Rect2 = Rect2(-150.0, -100.0, 300.0, 200.0)
+				if glove_rect.has_point(glove6.to_local(mouse_pos)):
+					pending_pickup_placed_punchglove = true
+					pending_pickup_item_name = ""
+					var pickup_target: Vector2 = Vector2(750.0, 480.0)
+					nav_agent.target_position = pickup_target
+					return
+
+		if try_handle_scene6_item_interactions(mouse_pos):
+			return
 
 		for item_name: String in InventoryData.ITEM_DEFINITIONS.keys():
 			var item_node: Node = get_node_or_null("../" + item_name)
@@ -226,6 +357,16 @@ func try_use_selected_item_on_remote(mouse_pos: Vector2) -> bool:
 	var selected_item: ItemData = inventory_ui.get_selected_item()
 	if selected_item == null or selected_item.item_id != "remote_for_glove":
 		return false
+
+	var scene_path: String = get_tree().current_scene.scene_file_path
+	if scene_path == "res://mars_ground_6.tscn":
+		if InventoryData.scene6_punchglove_triggered:
+			return false
+		var placed_glove: AnimatedSprite2D = get_node_or_null("../PlacedPunchgloveOnRock") as AnimatedSprite2D
+		if placed_glove != null and placed_glove.visible:
+			InventoryData.scene6_punchglove_triggered = true
+			trigger_scene6_glove_punch()
+			return true
 	
 	# Remote no longer works if martian is already defeated or extinguisher was launched
 	if InventoryData.martian_defeated or InventoryData.extinguisher_launched:
@@ -248,6 +389,40 @@ func try_use_selected_item_on_remote(mouse_pos: Vector2) -> bool:
 	launch_extinguisher_sequence()
 	# Remote is NOT consumed - stays in inventory
 	return true
+
+func trigger_scene6_glove_punch() -> void:
+	var placed_glove: AnimatedSprite2D = get_node_or_null("../PlacedPunchgloveOnRock") as AnimatedSprite2D
+	var martian: AnimatedSprite2D = get_node_or_null("../MartianWithGun") as AnimatedSprite2D
+	var gun_node: Node2D = get_node_or_null("../Gun") as Node2D
+	if placed_glove == null or martian == null:
+		return
+
+	# Play punching animation on glove
+	placed_glove.play("punching")
+
+	await get_tree().create_timer(0.4).timeout
+
+	# Martian plays "disarmed" animation when gun gets hit
+	if martian != null and martian.sprite_frames != null and martian.sprite_frames.has_animation(&"disarmed"):
+		martian.play("disarmed")
+
+	# Show flying gun and launch it in the direction of the punchglove (leftwards / up-left)
+	if gun_node != null:
+		var gun_anim: AnimatedSprite2D = gun_node.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+		if gun_anim != null:
+			gun_anim.play("rotating")
+
+		# Start position at Martian's gun location (around 800, 320)
+		gun_node.global_position = Vector2(800.0, 320.0)
+		gun_node.visible = true
+
+		# Trajectory: Fly leftwards in direction of punchglove / off-screen left (x: 800 -> 200, y: 320 -> 50)
+		var tween: Tween = create_tween().set_parallel(true)
+		tween.tween_property(gun_node, "global_position:y", 50.0, 1.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.tween_property(gun_node, "global_position:x", 200.0, 1.2).set_trans(Tween.TRANS_LINEAR)
+
+		await tween.finished
+		gun_node.visible = false
 
 
 func launch_extinguisher_sequence() -> void:
@@ -447,6 +622,8 @@ func try_handle_arrow_click(mouse_pos: Vector2) -> bool:
 				get_tree().change_scene_to_file("res://mars_ground_3.tscn")
 			elif scene_path == "res://mars_ground_5.tscn":
 				get_tree().change_scene_to_file("res://mars_ground_4.tscn")
+			elif scene_path == "res://mars_ground_6.tscn":
+				get_tree().change_scene_to_file("res://mars_ground_3.tscn")
 			return true
 
 	var down_arrow: Node = get_node_or_null("../DownArrow")
@@ -474,15 +651,15 @@ func try_pickup_pending_item() -> void:
 		pending_pickup_placed_punchglove = false
 		var placed_punchglove: AnimatedSprite2D = get_node_or_null("../PlacedPunchglove") as AnimatedSprite2D
 		if placed_punchglove == null or not placed_punchglove.visible:
+			placed_punchglove = get_node_or_null("../PlacedPunchgloveOnRock") as AnimatedSprite2D
+		if placed_punchglove == null or not placed_punchglove.visible:
 			return
-		var pickup_target: Vector2 = placed_punchglove.global_position
-		pickup_target.x -= 200.0
-		var dist: float = global_position.distance_to(pickup_target)
-		if dist > PICKUP_DISTANCE:
-			return
-		if InventoryData.return_item_by_id("mechanical_glove"):
-			placed_punchglove.visible = false
+		placed_punchglove.visible = false
+		if placed_punchglove.name == "PlacedPunchglove":
 			InventoryData.placed_punchglove_visible = false
+		elif placed_punchglove.name == "PlacedPunchgloveOnRock":
+			InventoryData.placed_punchglove_on_rock_visible = false
+		if InventoryData.return_item_by_id("mechanical_glove"):
 			if inventory_ui != null:
 				inventory_ui.refresh()
 		return
@@ -518,6 +695,59 @@ func start_nice_martian_dialogue() -> void:
 	]
 	dui.show_choices(choices, _on_nice_martian_choice_selected)
 
+func start_scene6_martian_dialogue() -> void:
+	var dui: DialogueUI = ensure_dialogue_ui()
+	if InventoryData.scene6_punchglove_triggered:
+		dui.start_dialogue_from_json("res://dialogues/scene6_disarmed_martian.json")
+		if not dui.dialogue_finished.is_connected(_on_scene6_disarmed_dialogue_finished):
+			dui.dialogue_finished.connect(_on_scene6_disarmed_dialogue_finished, CONNECT_ONE_SHOT)
+	else:
+		dui.start_dialogue_from_json("res://dialogues/scene6_martian.json")
+		if not dui.dialogue_finished.is_connected(_on_scene6_dialogue_finished):
+			dui.dialogue_finished.connect(_on_scene6_dialogue_finished, CONNECT_ONE_SHOT)
+
+func _on_scene6_disarmed_dialogue_finished() -> void:
+	if not InventoryData.scene6_gum_given:
+		InventoryData.scene6_gum_given = true
+		if InventoryData.return_item_by_id("chewing_gum"):
+			ensure_inventory_ui()
+			inventory_ui.refresh()
+
+func _on_scene6_dialogue_finished() -> void:
+	disable_control()
+	var martian: AnimatedSprite2D = get_node_or_null("../MartianWithGun") as AnimatedSprite2D
+	var laser: Sprite2D = get_node_or_null("../Laser") as Sprite2D
+	var landon_marker: Marker2D = get_node_or_null("Marker2D") as Marker2D
+	if martian == null or laser == null or landon_marker == null:
+		get_tree().change_scene_to_file("res://lose2.tscn")
+		return
+
+	var gun_marker: Marker2D = martian.get_node_or_null("Marker2D") as Marker2D
+	if gun_marker == null:
+		get_tree().change_scene_to_file("res://lose2.tscn")
+		return
+
+	var gun_pos: Vector2 = gun_marker.global_position
+	var target_pos: Vector2 = landon_marker.global_position
+
+	var direction: Vector2 = (target_pos - gun_pos).normalized()
+	var distance: float = gun_pos.distance_to(target_pos)
+
+	laser.global_position = gun_pos + (direction * distance / 2.0)
+	laser.rotation = direction.angle()
+	laser.scale.x = distance / laser.texture.get_width()
+	laser.scale.y = 0.015432
+	laser.visible = true
+
+	await get_tree().create_timer(0.8).timeout
+
+	visible = false
+	laser.visible = false
+
+	await get_tree().create_timer(1.0).timeout
+
+	get_tree().change_scene_to_file("res://lose2.tscn")
+
 func _on_nice_martian_choice_selected(choice_idx: int) -> void:
 	var dui: DialogueUI = ensure_dialogue_ui()
 	var json_path: String = ""
@@ -539,6 +769,10 @@ func _physics_process(_delta: float) -> void:
 			pending_talk_nice_martian = false
 			animated_sprite.flip_h = false
 			start_nice_martian_dialogue()
+		if pending_talk_scene6_martian:
+			pending_talk_scene6_martian = false
+			animated_sprite.flip_h = false
+			start_scene6_martian_dialogue()
 		if pending_pickup_placed_punchglove or pending_pickup_item_name != "":
 			try_pickup_pending_item()
 		if is_walking:

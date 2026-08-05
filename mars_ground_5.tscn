@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://16d58bpumpto" path="res://images/arrow.png" id="2_27qes"]
 [ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="3_jmpvu"]
 [ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="4_f2ds0"]
+[ext_resource type="Texture2D" uid="uid://dyn04kjv20as7" path="res://images/glue.png" id="5_27qes"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_ntac3"]
 vertices = PackedVector2Array(-10, 380, 1250, 380, 1250, 580, -10, 580)
@@ -111,3 +112,8 @@ animation = &"idle"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Landon" unique_id=506546849]
 position = Vector2(0, -120)
 shape = SubResource("RectangleShape2D_ba5a6")
+
+[node name="Glue" type="Sprite2D" parent="." unique_id=1376955452]
+position = Vector2(250, 470)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("5_27qes")
