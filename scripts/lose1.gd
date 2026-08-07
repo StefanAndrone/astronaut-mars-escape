@@ -19,5 +19,7 @@ func reset_and_reload() -> void:
 	var current_scene_path: String = get_tree().current_scene.scene_file_path
 	if current_scene_path == "res://lose2.tscn":
 		get_tree().change_scene_to_file("res://mars_ground_6.tscn")
+	elif current_scene_path == "res://lose3.tscn":
+		get_tree().change_scene_to_file("res://mars_ground_5.tscn")
 	else:
 		get_tree().change_scene_to_file("res://mars_ground_2.tscn")

@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://16d58bpumpto" path="res://images/arrow.png" id="2_r0yli"]
 [ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="3_c5pv0"]
 [ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="4_0386m"]
+[ext_resource type="Texture2D" uid="uid://vorf0hypju4m" path="res://images/projector.png" id="6_0386m"]
 [ext_resource type="Texture2D" uid="uid://chwn6trgtu2o5" path="res://images/nice martian.png" id="6_c5pv0"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_ntac3"]
@@ -122,3 +123,8 @@ shape = SubResource("RectangleShape2D_ba5a6")
 position = Vector2(931, 322.00003)
 scale = Vector2(0.80899996, 0.749)
 texture = ExtResource("6_c5pv0")
+
+[node name="HolographicProjector" type="Sprite2D" parent="." unique_id=1547399801]
+position = Vector2(300, 480)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("6_0386m")

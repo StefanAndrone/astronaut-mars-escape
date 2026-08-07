@@ -25,7 +25,10 @@ static var ITEM_DEFINITIONS: Dictionary = {
 	"FlowerVase": ItemData.new("flower_vase", "Flower Vase", "res://images/flower vase.png"),
 	"Rock": ItemData.new("rock", "Rock", "res://images/rock.png"),
 	"Glue": ItemData.new("glue", "Glue Tube", "res://images/glue.png"),
-	"ChewingGum": ItemData.new("chewing_gum", "Chewing Gum", "res://images/chewing gum.png")
+	"ChewingGum": ItemData.new("chewing_gum", "Chewing Gum", "res://images/chewing gum.png"),
+	"ChewedGum": ItemData.new("chewed_gum", "Chewed Gum", "res://images/chewed gum.png"),
+	"StickyPunchglove": ItemData.new("sticky_punchglove", "Sticky punchglove", "res://images/mechanical glove.png"),
+	"HolographicProjector": ItemData.new("holographic_projector", "Holographic Projector", "res://images/projector.png")
 }
 
 static func _static_init() -> void:

@@ -92,10 +92,46 @@ func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 	if is_frozen:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		if InventoryData.slots[slot_index] == null:
+		var previously_selected_slot: int = selected_slot
+		var clicked_item: ItemData = InventoryData.slots[slot_index]
+		
+		if clicked_item == null:
 			clear_selection()
 		else:
+			# Check if using selected item on another inventory slot
+			if previously_selected_slot != -1 and previously_selected_slot != slot_index:
+				var selected_item: ItemData = InventoryData.slots[previously_selected_slot]
+				if selected_item != null:
+					# Combine Chewed Gum or Chewing Gum with Mechanical Glove
+					var is_gum: bool = (selected_item.item_id == "chewed_gum" or selected_item.item_id == "chewing_gum" or clicked_item.item_id == "chewed_gum" or clicked_item.item_id == "chewing_gum")
+					var is_glove: bool = (selected_item.item_id == "mechanical_glove" or clicked_item.item_id == "mechanical_glove")
+					if is_gum and is_glove:
+						var sticky_glove: ItemData = InventoryData.ITEM_DEFINITIONS.get("StickyPunchglove")
+						if sticky_glove != null:
+							# Set target slot to Sticky Punchglove and empty source slot
+							InventoryData.slots[previously_selected_slot] = null
+							InventoryData.slots[slot_index] = sticky_glove
+							clear_selection()
+							refresh()
+							var vp_handled: Viewport = get_viewport()
+							if vp_handled != null:
+								vp_handled.set_input_as_handled()
+							return
+
 			select_slot(slot_index)
+			if clicked_item.item_id == "chewing_gum":
+				consume_selected_item()
+				var chewed_item: ItemData = InventoryData.ITEM_DEFINITIONS.get("ChewedGum")
+				if chewed_item != null:
+					InventoryData.slots[slot_index] = chewed_item
+					refresh()
+				var landon: Node = get_tree().current_scene.get_node_or_null("Landon")
+				if landon != null and landon.has_method("ensure_dialogue_ui"):
+					var dui: DialogueUI = landon.call("ensure_dialogue_ui") as DialogueUI
+					if dui != null:
+						dui.start_dialogue([
+							{"speaker": "Astronaut", "text": "That gum was so tasty!", "duration": 3.0}
+						])
 		var vp: Viewport = get_viewport()
 		if vp != null:
 			vp.set_input_as_handled()

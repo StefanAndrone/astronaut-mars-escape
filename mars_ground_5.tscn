@@ -5,6 +5,9 @@
 [ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="3_jmpvu"]
 [ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="4_f2ds0"]
 [ext_resource type="Texture2D" uid="uid://dyn04kjv20as7" path="res://images/glue.png" id="5_27qes"]
+[ext_resource type="Texture2D" uid="uid://cmmfxgbn0hr2w" path="res://images/pole.png" id="6_733yp"]
+[ext_resource type="Texture2D" uid="uid://ypwj30l083da" path="res://images/Red.png" id="7_qslk2"]
+[ext_resource type="Script" uid="uid://df6t10vnh3f6h" path="res://scripts/pole_red_line.gd" id="8_1jx07"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_ntac3"]
 vertices = PackedVector2Array(-10, 380, 1250, 380, 1250, 580, -10, 580)
@@ -81,6 +84,9 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ba5a6"]
 size = Vector2(119.5, 317.5)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e2u5f"]
+size = Vector2(1195, 1247)
+
 [node name="MarsGround5" type="Node2D" unique_id=754425788]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2041998834]
@@ -113,7 +119,36 @@ animation = &"idle"
 position = Vector2(0, -120)
 shape = SubResource("RectangleShape2D_ba5a6")
 
+[node name="Marker2D" type="Marker2D" parent="Landon" unique_id=1576783565]
+position = Vector2(7, -131)
+
 [node name="Glue" type="Sprite2D" parent="." unique_id=1376955452]
 position = Vector2(250, 470)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("5_27qes")
+
+[node name="Pole" type="Sprite2D" parent="." unique_id=610275404]
+position = Vector2(1050, 277.00003)
+scale = Vector2(0.8, 0.8945869)
+texture = ExtResource("6_733yp")
+
+[node name="Marker2D" type="Marker2D" parent="Pole" unique_id=1149481549]
+position = Vector2(-58.750015, -165.43953)
+
+[node name="Laser" type="Sprite2D" parent="." unique_id=1913279243]
+visible = false
+scale = Vector2(0.2, 0.0154)
+texture = ExtResource("7_qslk2")
+
+[node name="RedLine" type="Area2D" parent="." unique_id=2139354939]
+script = ExtResource("8_1jx07")
+
+[node name="RedLineSprite" type="Sprite2D" parent="RedLine" unique_id=2002245412]
+position = Vector2(576, 517)
+scale = Vector2(0.002, 0.205)
+texture = ExtResource("7_qslk2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RedLine" unique_id=1070014189]
+position = Vector2(576, 517)
+scale = Vector2(0.009, 0.205)
+shape = SubResource("RectangleShape2D_e2u5f")
