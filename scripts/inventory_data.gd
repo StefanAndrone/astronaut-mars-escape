@@ -15,7 +15,8 @@ static var placed_rock_visible: bool = false
 static var rock_glued: bool = false
 static var placed_punchglove_on_rock_visible: bool = false
 static var scene6_punchglove_triggered: bool = false
-static var scene6_gum_given: bool = false
+static var scene6_projector_given: bool = false
+static var scene5_projector_trap_set: bool = false
 
 static var ITEM_DEFINITIONS: Dictionary = {
 	"FireExtinguisher": ItemData.new("fire_extinguisher", "Fire Extinguisher", "res://images/fire extinguisher.png"),
@@ -25,10 +26,10 @@ static var ITEM_DEFINITIONS: Dictionary = {
 	"FlowerVase": ItemData.new("flower_vase", "Flower Vase", "res://images/flower vase.png"),
 	"Rock": ItemData.new("rock", "Rock", "res://images/rock.png"),
 	"Glue": ItemData.new("glue", "Glue Tube", "res://images/glue.png"),
-	"ChewingGum": ItemData.new("chewing_gum", "Chewing Gum", "res://images/chewing gum.png"),
-	"ChewedGum": ItemData.new("chewed_gum", "Chewed Gum", "res://images/chewed gum.png"),
 	"StickyPunchglove": ItemData.new("sticky_punchglove", "Sticky punchglove", "res://images/mechanical glove.png"),
-	"HolographicProjector": ItemData.new("holographic_projector", "Holographic Projector", "res://images/projector.png")
+	"HolographicProjector": ItemData.new("holographic_projector", "Holographic Projector", "res://images/projector.png"),
+	"RemoteForProjector": ItemData.new("remote_for_projector", "Remote for Projector", "res://images/remote for projector.png"),
+	"GloveWithProjector": ItemData.new("glove_with_projector", "Glove with Projector", "res://images/glove and projector.png")
 }
 
 static func _static_init() -> void:

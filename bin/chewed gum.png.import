@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b78drjh0fkbrf"
-path="res://.godot/imported/chewing gum.png-670903f15905ad59e8fb548c0057ff96.ctex"
+uid="uid://ldhattn706kt"
+path="res://.godot/imported/chewed gum.png-5cd1dece23143eae84e628f4958a1f58.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/chewing gum.png"
-dest_files=["res://.godot/imported/chewing gum.png-670903f15905ad59e8fb548c0057ff96.ctex"]
+source_file="res://bin/chewed gum.png"
+dest_files=["res://.godot/imported/chewed gum.png-5cd1dece23143eae84e628f4958a1f58.ctex"]
 
 [params]
 

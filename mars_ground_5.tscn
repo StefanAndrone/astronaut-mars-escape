@@ -4,8 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://16d58bpumpto" path="res://images/arrow.png" id="2_27qes"]
 [ext_resource type="Script" uid="uid://dqoftnsb7l5ej" path="res://scripts/landon.gd" id="3_jmpvu"]
 [ext_resource type="Texture2D" uid="uid://plgarrhabtxo" path="res://images/MCTile.png" id="4_f2ds0"]
+[ext_resource type="Texture2D" uid="uid://dtbsdxvuni4s4" path="res://images/more frames MC.png" id="4_qslk2"]
 [ext_resource type="Texture2D" uid="uid://dyn04kjv20as7" path="res://images/glue.png" id="5_27qes"]
 [ext_resource type="Texture2D" uid="uid://cmmfxgbn0hr2w" path="res://images/pole.png" id="6_733yp"]
+[ext_resource type="Texture2D" uid="uid://dcojmu8xm7hmj" path="res://images/mechanical glove.png" id="6_e2u5f"]
+[ext_resource type="Texture2D" uid="uid://vorf0hypju4m" path="res://images/projector.png" id="7_4guvl"]
 [ext_resource type="Texture2D" uid="uid://ypwj30l083da" path="res://images/Red.png" id="7_qslk2"]
 [ext_resource type="Script" uid="uid://df6t10vnh3f6h" path="res://scripts/pole_red_line.gd" id="8_1jx07"]
 
@@ -13,6 +16,10 @@
 vertices = PackedVector2Array(-10, 380, 1250, 380, 1250, 580, -10, 580)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-10, 380, 1250, 380, 1250, 580, -10, 580)])
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qslk2"]
+atlas = ExtResource("4_qslk2")
+region = Rect2(488.25, 0, 162.75, 191.5)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nmfd4"]
 atlas = ExtResource("4_f2ds0")
@@ -47,6 +54,14 @@ animations = [{
 "frames": [],
 "loop": 1,
 "name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qslk2")
+}],
+"loop": 1,
+"name": &"forty five degrees",
 "speed": 5.0
 }, {
 "frames": [{
@@ -105,13 +120,33 @@ navigation_polygon = SubResource("NavigationPolygon_ntac3")
 
 [node name="Landon" type="CharacterBody2D" parent="." unique_id=920534230]
 position = Vector2(90, 450)
+scale = Vector2(0.65, 0.65)
 script = ExtResource("3_jmpvu")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Landon" unique_id=1654521131]
 position = Vector2(0, -120)
 scale = Vector2(0.686812, 0.679688)
 sprite_frames = SubResource("SpriteFrames_okw16")
-animation = &"idle"
+animation = &"forty five degrees"
+
+[node name="Hand" type="Marker2D" parent="Landon/AnimatedSprite2D" unique_id=1205321453]
+position = Vector2(-21.364906, -56.824615)
+
+[node name="PlacedGlove" type="Sprite2D" parent="Landon/AnimatedSprite2D/Hand" unique_id=49724620]
+visible = false
+z_index = 10
+position = Vector2(2.4372559, -0.5546875)
+rotation = -3.1415927
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("6_e2u5f")
+flip_v = true
+
+[node name="PlacedProjector" type="Sprite2D" parent="Landon/AnimatedSprite2D/Hand/PlacedGlove" unique_id=1526632923]
+z_index = 11
+position = Vector2(305.30273, 307.21045)
+rotation = 2.3561945
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("7_4guvl")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="Landon" unique_id=824789186]
 
@@ -152,3 +187,6 @@ texture = ExtResource("7_qslk2")
 position = Vector2(576, 517)
 scale = Vector2(0.009, 0.205)
 shape = SubResource("RectangleShape2D_e2u5f")
+
+[node name="Marker2D" type="Marker2D" parent="." unique_id=1302260698]
+position = Vector2(383, 482)

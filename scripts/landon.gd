@@ -13,6 +13,7 @@ var pending_pickup_item_name: String = ""
 var pending_pickup_placed_punchglove: bool = false
 var pending_talk_nice_martian: bool = false
 var pending_talk_scene6_martian: bool = false
+var pending_scene5_projector_trap: bool = false
 var is_launching: bool = false
 var is_disabled: bool = false
 
@@ -25,6 +26,22 @@ func _ready() -> void:
 	ensure_inventory_ui()
 	restore_placed_ramp_state()
 	restore_scene6_puzzle_state()
+	restore_scene5_puzzle_state()
+
+func restore_scene5_puzzle_state() -> void:
+	var scene_path: String = get_tree().current_scene.scene_file_path
+	if scene_path != "res://mars_ground_5.tscn":
+		return
+
+	if InventoryData.scene5_projector_trap_set:
+		disable_control()
+		animated_sprite.play("forty five degrees")
+		animated_sprite.scale = Vector2(-abs(0.686812 * (505.0 / 191.5)), 0.679688 * (505.0 / 191.5))
+		var hand_marker: Marker2D = get_node_or_null("AnimatedSprite2D/Hand") as Marker2D
+		if hand_marker != null:
+			var glove_node: Sprite2D = hand_marker.get_node_or_null("PlacedGlove") as Sprite2D
+			if glove_node != null:
+				glove_node.visible = true
 
 func restore_scene6_puzzle_state() -> void:
 	var scene_path: String = get_tree().current_scene.scene_file_path
@@ -46,6 +63,51 @@ func restore_scene6_puzzle_state() -> void:
 	if martian != null:
 		if InventoryData.scene6_punchglove_triggered:
 			martian.play("disarmed")
+
+func try_handle_scene5_item_interactions(mouse_pos: Vector2) -> bool:
+	if inventory_ui == null or inventory_ui.selected_slot == -1:
+		return false
+
+	var selected_item: ItemData = InventoryData.slots[inventory_ui.selected_slot]
+	if selected_item == null or selected_item.item_id != "glove_with_projector":
+		return false
+
+	var scene_path: String = get_tree().current_scene.scene_file_path
+	if scene_path != "res://mars_ground_5.tscn":
+		return false
+
+	var target_marker: Marker2D = get_node_or_null("../Marker2D") as Marker2D
+	var pole: Node = get_node_or_null("../Pole")
+	if pole != null and pole is Sprite2D:
+		var pole_sprite: Sprite2D = pole as Sprite2D
+		if pole_sprite.get_rect().has_point(pole_sprite.to_local(mouse_pos)) or mouse_pos.x > 800.0:
+			pending_scene5_projector_trap = true
+			if target_marker != null:
+				nav_agent.target_position = target_marker.global_position
+			else:
+				nav_agent.target_position = Vector2(383.0, 482.0)
+			return true
+
+	return false
+
+func trigger_scene5_projector_trap() -> void:
+	InventoryData.scene5_projector_trap_set = true
+	inventory_ui.consume_selected_item()
+	disable_control()
+	
+	animated_sprite.play("forty five degrees")
+	animated_sprite.scale = Vector2(-abs(0.686812 * (505.0 / 191.5)), 0.679688 * (505.0 / 191.5))
+	
+	var hand_marker: Marker2D = get_node_or_null("AnimatedSprite2D/Hand") as Marker2D
+	if hand_marker != null:
+		var glove_node: Sprite2D = hand_marker.get_node_or_null("PlacedGlove") as Sprite2D
+		if glove_node != null:
+			glove_node.visible = true
+
+	var dui: DialogueUI = ensure_dialogue_ui()
+	dui.start_dialogue([
+		{"speaker": "Astronaut", "text": "I am now in the right position...", "duration": 3.0}
+	])
 
 func try_handle_scene6_item_interactions(mouse_pos: Vector2) -> bool:
 	if inventory_ui == null or inventory_ui.selected_slot == -1:
@@ -85,12 +147,11 @@ func try_handle_scene6_item_interactions(mouse_pos: Vector2) -> bool:
 			is_hit = (mouse_pos.x > 880.0 and mouse_pos.x < 1150.0 and mouse_pos.y > 350.0 and mouse_pos.y < 520.0)
 
 		if is_hit:
-			# 2. Use Glue on Rock
+			# 2. Use Glue on Rock (Glue is NOT consumed)
 			if selected_item.item_id == "glue":
 				InventoryData.rock_glued = true
-				inventory_ui.consume_selected_item()
-				var dui: DialogueUI = ensure_dialogue_ui()
-				dui.start_dialogue([
+				var dui_rock: DialogueUI = ensure_dialogue_ui()
+				dui_rock.start_dialogue([
 					{"speaker": "Astronaut", "text": "Now the trap is almost set.", "duration": 3.0}
 				])
 				return true
@@ -98,8 +159,8 @@ func try_handle_scene6_item_interactions(mouse_pos: Vector2) -> bool:
 			# 3. Use Mechanical Glove on Rock
 			if selected_item.item_id == "mechanical_glove":
 				if not InventoryData.rock_glued:
-					var dui: DialogueUI = ensure_dialogue_ui()
-					dui.start_dialogue([
+					var dui_glove: DialogueUI = ensure_dialogue_ui()
+					dui_glove.start_dialogue([
 						{"speaker": "Astronaut", "text": "I need something to stick the glove onto the rock first.", "duration": 3.0}
 					])
 					return true
@@ -230,6 +291,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		var mouse_pos: Vector2 = get_global_mouse_position()
 		if try_handle_arrow_click(mouse_pos):
 			return
+
+		if try_handle_scene5_item_interactions(mouse_pos):
+			var vp5: Viewport = get_viewport()
+			if vp5 != null:
+				vp5.set_input_as_handled()
+			return
 		
 		if try_handle_scene6_item_interactions(mouse_pos):
 			var vp: Viewport = get_viewport()
@@ -300,8 +367,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if current_scene == "res://mars_ground_6.tscn" and InventoryData.scene6_punchglove_triggered:
 			var glove6: AnimatedSprite2D = get_node_or_null("../PlacedPunchgloveOnRock") as AnimatedSprite2D
 			if glove6 != null and glove6.visible:
-				# Punchglove click shape: Covers punchglove and bottom half of Martian body
-				var glove_rect: Rect2 = Rect2(-250.0, -50.0, 450.0, 250.0)
+				# Glove click shape: Covers rock/glove area (x: 850..1150, y: 380..520)
+				# PlacedPunchgloveOnRock is at (880, 460)
+				var glove_rect: Rect2 = Rect2(-100.0, -80.0, 250.0, 160.0)
 				if glove_rect.has_point(glove6.to_local(mouse_pos)):
 					pending_pickup_placed_punchglove = true
 					pending_pickup_item_name = ""
@@ -714,11 +782,12 @@ func start_scene6_martian_dialogue() -> void:
 			dui.dialogue_finished.connect(_on_scene6_dialogue_finished, CONNECT_ONE_SHOT)
 
 func _on_scene6_disarmed_dialogue_finished() -> void:
-	if not InventoryData.scene6_gum_given:
-		InventoryData.scene6_gum_given = true
-		if InventoryData.return_item_by_id("chewing_gum"):
-			ensure_inventory_ui()
-			inventory_ui.refresh()
+	if not InventoryData.scene6_projector_given:
+		InventoryData.scene6_projector_given = true
+		InventoryData.return_item_by_id("holographic_projector")
+		InventoryData.return_item_by_id("remote_for_projector")
+		ensure_inventory_ui()
+		inventory_ui.refresh()
 
 func _on_scene6_dialogue_finished() -> void:
 	disable_control()
@@ -772,6 +841,9 @@ func _physics_process(_delta: float) -> void:
 	if is_launching or is_disabled:
 		return
 	if nav_agent.is_navigation_finished():
+		if pending_scene5_projector_trap:
+			pending_scene5_projector_trap = false
+			trigger_scene5_projector_trap()
 		if pending_talk_nice_martian:
 			pending_talk_nice_martian = false
 			animated_sprite.flip_h = false

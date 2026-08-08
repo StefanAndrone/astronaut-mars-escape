@@ -102,15 +102,20 @@ func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 			if previously_selected_slot != -1 and previously_selected_slot != slot_index:
 				var selected_item: ItemData = InventoryData.slots[previously_selected_slot]
 				if selected_item != null:
-					# Combine Chewed Gum or Chewing Gum with Mechanical Glove
-					var is_gum: bool = (selected_item.item_id == "chewed_gum" or selected_item.item_id == "chewing_gum" or clicked_item.item_id == "chewed_gum" or clicked_item.item_id == "chewing_gum")
+					# Combine Glue Tube with Mechanical Glove (Glue is NOT consumed)
+					# Only allowed after obtaining Holographic Projector!
+					var has_projector: bool = InventoryData.has_item("holographic_projector")
+					var is_glue: bool = (selected_item.item_id == "glue" or clicked_item.item_id == "glue")
 					var is_glove: bool = (selected_item.item_id == "mechanical_glove" or clicked_item.item_id == "mechanical_glove")
-					if is_gum and is_glove:
+					if has_projector and is_glue and is_glove:
 						var sticky_glove: ItemData = InventoryData.ITEM_DEFINITIONS.get("StickyPunchglove")
 						if sticky_glove != null:
-							# Set target slot to Sticky Punchglove and empty source slot
-							InventoryData.slots[previously_selected_slot] = null
-							InventoryData.slots[slot_index] = sticky_glove
+							# Determine which slot is glove and which is glue
+							var glove_slot_idx: int = slot_index
+							if selected_item.item_id == "mechanical_glove":
+								glove_slot_idx = previously_selected_slot
+							# Replace Mechanical Glove with Sticky Punchglove, keep Glue in inventory
+							InventoryData.slots[glove_slot_idx] = sticky_glove
 							clear_selection()
 							refresh()
 							var vp_handled: Viewport = get_viewport()
@@ -118,20 +123,22 @@ func _on_slot_gui_input(event: InputEvent, slot_index: int) -> void:
 								vp_handled.set_input_as_handled()
 							return
 
+					# 2. Combine Sticky Punchglove with Holographic Projector
+					var is_sticky_glove: bool = (selected_item.item_id == "sticky_punchglove" or clicked_item.item_id == "sticky_punchglove")
+					var is_proj: bool = (selected_item.item_id == "holographic_projector" or clicked_item.item_id == "holographic_projector")
+					if is_sticky_glove and is_proj:
+						var glove_proj: ItemData = InventoryData.ITEM_DEFINITIONS.get("GloveWithProjector")
+						if glove_proj != null:
+							InventoryData.slots[previously_selected_slot] = null
+							InventoryData.slots[slot_index] = glove_proj
+							clear_selection()
+							refresh()
+							var vp_handled2: Viewport = get_viewport()
+							if vp_handled2 != null:
+								vp_handled2.set_input_as_handled()
+							return
+
 			select_slot(slot_index)
-			if clicked_item.item_id == "chewing_gum":
-				consume_selected_item()
-				var chewed_item: ItemData = InventoryData.ITEM_DEFINITIONS.get("ChewedGum")
-				if chewed_item != null:
-					InventoryData.slots[slot_index] = chewed_item
-					refresh()
-				var landon: Node = get_tree().current_scene.get_node_or_null("Landon")
-				if landon != null and landon.has_method("ensure_dialogue_ui"):
-					var dui: DialogueUI = landon.call("ensure_dialogue_ui") as DialogueUI
-					if dui != null:
-						dui.start_dialogue([
-							{"speaker": "Astronaut", "text": "That gum was so tasty!", "duration": 3.0}
-						])
 		var vp: Viewport = get_viewport()
 		if vp != null:
 			vp.set_input_as_handled()
